@@ -8,3 +8,5 @@ scala:
 
 script:
   - sbt test
+
+  /home/travis/.sbt/launchers/1.2.8/sbt-launch.jar
