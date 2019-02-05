@@ -58,7 +58,7 @@ class TJTwitter2 {
      * stores them in an arrayList of TJ_Status2 objects.
      * Populates statuses.
      *
-     * @param String the text file
+     * @param handle the text file
      */
     public void fetchTweets(String handle) throws IOException {
         Scanner scan = new Scanner(new File(handle));

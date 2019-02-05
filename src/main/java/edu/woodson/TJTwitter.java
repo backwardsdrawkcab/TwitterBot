@@ -45,8 +45,9 @@ class TJTwitter {
     /******************  Part III - Tweet *******************/
     /**
      * This method tweets a given message.
-     *
-     * @param String a message you wish to Tweet out
+     * @param message message you wish to Tweet out
+     * @throws TwitterException
+     * @throws IOException
      */
     public void tweetOut(String message) throws TwitterException, IOException {
 
@@ -57,7 +58,7 @@ class TJTwitter {
     /**
      * This method queries the tweets of a particular user's handle.
      *
-     * @param String the Twitter handle (username) without the @sign
+     * @param handle the Twitter handle (username) without the @sign
      */
     @SuppressWarnings("unchecked")
     public void queryHandle(String handle) throws TwitterException, IOException {
@@ -74,7 +75,7 @@ class TJTwitter {
      * This method fetches the most recent 2,000 tweets of a particular user's handle and
      * stores them in an arrayList of Status objects.  Populates statuses.
      *
-     * @param String the Twitter handle (username) without the @sign
+     * @param handle the Twitter handle (username) without the @sign
      */
     public void fetchTweets(String handle) throws TwitterException, IOException {
         // Creates file for dedebugging purposes
