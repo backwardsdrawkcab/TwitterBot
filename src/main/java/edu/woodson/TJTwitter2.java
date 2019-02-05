@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Scanner;
 
 class TJTwitter2 {
-    private List<TJ_Status2> statuses;
+    private final List<TJ_Status2> statuses;
     private int numberOfTweets;
-    private List<String> terms;
+    private final List<String> terms;
     private String popularWord;
     private int frequencyMax;
 
-    public TJTwitter2() throws IOException {
-        statuses = new ArrayList<TJ_Status2>();
-        terms = new ArrayList<String>();
+    public TJTwitter2() {
+        statuses = new ArrayList<>();
+        terms = new ArrayList<>();
     }
 
     private static void sort(Comparable[] array) {
@@ -80,7 +80,7 @@ class TJTwitter2 {
      * This method removes common English words from the list of terms.
      * Remove all words found in commonWords.txt  from the argument list.
      * The count will not be given in commonWords.txt. You must count the number of words in this method.
-     * This method should NOT throw an excpetion.  Use try/catch.
+     * This method should NOT throw an exception.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
     public void removeCommonEnglishWords() {
@@ -104,7 +104,7 @@ class TJTwitter2 {
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
-     * @post will popopulate the frequencyMax variable with the frequency of the most common word
+     * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
     public void mostPopularWord() {
