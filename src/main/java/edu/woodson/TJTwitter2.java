@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 class TJTwitter2 {
-    private final List<TJ_Status2> statuses;
+    private final List<Status> statuses;
     private int numberOfTweets;
     private final List<String> terms;
     private String popularWord;
@@ -55,7 +55,7 @@ class TJTwitter2 {
 
     /**
      * This method reads a file of tweets and
-     * stores them in an arrayList of TJ_Status2 objects.
+     * stores them in an arrayList of Status objects.
      * Populates statuses.
      *
      * @param handle the text file
@@ -63,7 +63,7 @@ class TJTwitter2 {
     public void fetchTweets(String handle) throws IOException {
         Scanner scan = new Scanner(new File(handle));
         while (scan.hasNext())
-            statuses.add(new TJ_Status2(scan.nextLine()));
+            statuses.add(new Status(scan.nextLine()));
         numberOfTweets = statuses.size();
     }
 

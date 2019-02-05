@@ -5,3 +5,6 @@ version := "0.1"
 scalaVersion := "2.12.8"
 
 libraryDependencies += "org.twitter4j" % "twitter4j-core" % "4.0.+"
+libraryDependencies += "org.junit.jupiter" % "junit-jupiter-api" % "5.3.2" % Test
+libraryDependencies += "org.junit.jupiter" % "junit-jupiter-engine" % "5.3.2" % Test
+libraryDependencies += "org.junit.jupiter" % "junit-jupiter-params" % "5.3.2" % Test

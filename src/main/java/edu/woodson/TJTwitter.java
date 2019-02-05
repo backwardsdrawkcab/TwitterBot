@@ -1,6 +1,7 @@
 package edu.woodson;
 
 import twitter4j.*;
+import twitter4j.Status;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,9 +11,9 @@ import java.util.List;
 
 class TJTwitter {
     private final Twitter twitter;
-    private final List<Status> statuses;
-    private int numberOfTweets;
+    private final List<twitter4j.Status> statuses;
     private final List<String> terms;
+    private int numberOfTweets;
     private String popularWord;
     private int frequencyMax;
 
@@ -42,12 +43,13 @@ class TJTwitter {
 
     /**
      * This method tweets a given message.
+     *
      * @param message message you wish to Tweet out
      * @throws TwitterException
      * @throws IOException
      */
     public void tweetOut(String message) {
-
+    
     }
 
 
