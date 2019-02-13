@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 class TJTwitter2 {
     private List<TJ_Status2> statuses;
@@ -36,7 +37,7 @@ class TJTwitter2 {
         terms.clear();
         fetchTweets(handle);
         System.out.println("Number of tweets: " + getNumberOfTweets());
-        splitIntoWords();
+        terms.addAll(splitIntoWords(statuses));
         System.out.println("All the words: " + terms);
         removeCommonEnglishWords();
         System.out.println("Remove common words: " + terms);
@@ -66,10 +67,12 @@ class TJTwitter2 {
     /**
      * This method takes each status and splits them into individual words.
      * Store each word in terms.
+     * @param statuses
      */
-    public void splitIntoWords() {
-        //your code goes here
-
+    public List<String> splitIntoWords(List<TJ_Status2> statuses) {
+        return statuses.stream()
+                .map(TJ_Status2::getText)
+                .collect(Collectors.toList());
     }
 
     /**
