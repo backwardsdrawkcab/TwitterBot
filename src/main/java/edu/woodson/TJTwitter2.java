@@ -10,7 +10,6 @@ class TJTwitter2 {
     private List<Status> statuses;
     private int numberOfTweets;
     private List<String> terms;
-    private String popularWord;
     private int frequencyMax;
 
     public TJTwitter2() {
@@ -22,10 +21,6 @@ class TJTwitter2 {
         return terms;
     }
 
-    public String getMostPopularWord() {
-        return popularWord;
-    }
-
     public int getFrequencyMax() {
         return frequencyMax;
     }
@@ -35,18 +30,14 @@ class TJTwitter2 {
         statuses.clear();
         terms.clear();
         fetchTweets(handle);
-        System.out.println("Number of tweets: " + getNumberOfTweets());
         terms = splitIntoWords(statuses);
-        System.out.println("All the words: " + terms);
         removeCommonEnglishWords();
-        System.out.println("Remove common words: " + terms);
         terms = sortAndRemoveEmpties(terms);
-        System.out.println("Sorted: " + terms);
-        mostPopularWord();
-    }
-
-    public int getNumberOfTweets() {
-        return numberOfTweets;
+        Optional<Integer> popularWord = mostPopularWord(terms);
+        if (popularWord.isPresent()) {
+            System.out.println("Max Frequency: " + popularWord.get());
+            frequencyMax = popularWord.get();
+        }
     }
 
     /**
@@ -112,11 +103,26 @@ class TJTwitter2 {
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
-     * @post will popopulate the frequencyMax variable with the frequency of the most common word
+     * @param terms The terms.
+     * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public void mostPopularWord() {
-        //your code goes here
+    public Optional<Integer> mostPopularWord(List<String> terms) {
+        Map<String, Integer> wordMap = new HashMap<>();
+        terms.stream()
+                .map(String::toLowerCase)
+                .forEach(word -> {
+                    int value = wordMap.containsKey(word)
+                            ? wordMap.get(word) + 1
+                            : 0;
+                    wordMap.put(word, value);
+                });
+
+        return wordMap.values().stream().max(Integer::compareTo);
+    }
+
+    public int getNumberOfTweets() {
+        return numberOfTweets;
     }
 
     /**
