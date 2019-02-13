@@ -2,10 +2,9 @@ package edu.woodson;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 class TJTwitter2 {
     private List<TJ_Status2> statuses;
@@ -14,7 +13,7 @@ class TJTwitter2 {
     private String popularWord;
     private int frequencyMax;
 
-    public TJTwitter2() throws IOException {
+    public TJTwitter2() {
         statuses = new ArrayList<TJ_Status2>();
         terms = new ArrayList<String>();
     }
@@ -67,11 +66,18 @@ class TJTwitter2 {
     /**
      * This method takes each status and splits them into individual words.
      * Store each word in terms.
+     *
      * @param statuses
      */
     public List<String> splitIntoWords(List<TJ_Status2> statuses) {
         return statuses.stream()
                 .map(TJ_Status2::getText)
+                .map(StringTokenizer::new)
+                .map(Enumeration::asIterator)
+                .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
+                .map(Iterable::spliterator)
+                .flatMap(spliterator -> StreamSupport.stream(spliterator, false))
+                .map(Object::toString)
                 .collect(Collectors.toList());
     }
 
