@@ -14,8 +14,8 @@ class TJTwitter2 {
     private int frequencyMax;
 
     public TJTwitter2() {
-        statuses = new ArrayList<Status>();
-        terms = new ArrayList<String>();
+        statuses = new ArrayList<>();
+        terms = new ArrayList<>();
     }
 
     public List<String> getTerms() {
@@ -36,11 +36,11 @@ class TJTwitter2 {
         terms.clear();
         fetchTweets(handle);
         System.out.println("Number of tweets: " + getNumberOfTweets());
-        terms.addAll(splitIntoWords(statuses));
+        terms = splitIntoWords(statuses);
         System.out.println("All the words: " + terms);
         removeCommonEnglishWords();
         System.out.println("Remove common words: " + terms);
-        sortAndRemoveEmpties();
+        terms = sortAndRemoveEmpties(terms);
         System.out.println("Sorted: " + terms);
         mostPopularWord();
     }
@@ -85,7 +85,7 @@ class TJTwitter2 {
      * This method removes common English words from the list of terms.
      * Remove all words found in commonWords.txt  from the argument list.
      * The count will not be given in commonWords.txt. You must count the number of words in this method.
-     * This method should NOT throw an excpetion.  Use try/catch.
+     * This method should NOT throw an exception.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
     public void removeCommonEnglishWords() {
@@ -94,15 +94,18 @@ class TJTwitter2 {
     }
 
     /**
-     * This method sorts the words in terms in alphabetically (and lexicographic) order.
-     * You should use your sorting code you wrote earlier this year.
-     * Remove all empty strings while you are at it.
+     * <p>
+     * * This method sorts the words in terms in alphabetically (and lexicographic) order.
+     * * You should use your sorting code you wrote earlier this year.
+     * * Remove all empty strings while you are at it.
+     * </p>
+     *
+     * @param terms The terms.
      */
-    @SuppressWarnings("unchecked")
-    public void sortAndRemoveEmpties() {
-        //your code goes here
-
-
+    public List<String> sortAndRemoveEmpties(List<String> terms) {
+        terms.sort(String::compareTo);
+        terms.removeIf(s -> s.trim().isEmpty());
+        return terms;
     }
 
     /**
