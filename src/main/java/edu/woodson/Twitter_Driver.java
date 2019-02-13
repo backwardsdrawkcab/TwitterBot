@@ -3,18 +3,14 @@ package edu.woodson;// Name:
 
 import twitter4j.*;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Twitter_Driver {
-    private static PrintStream consolePrint;
 
     public static void main(String[] args) throws TwitterException, IOException {
-        consolePrint = System.out; // this preserves the standard output so we can get to it later
+        PrintStream consolePrint = System.out;
 
         // PART III - Connect
         // set classpath, edit properties file

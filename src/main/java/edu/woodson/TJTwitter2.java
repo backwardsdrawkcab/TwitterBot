@@ -1,24 +1,27 @@
 package edu.woodson;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 class TJTwitter2 {
-    private List<Status> statuses;
+    private final List<Status> statuses;
     private int numberOfTweets;
-    private List<String> terms;
+    private List<String> words;
     private int frequencyMax;
 
     public TJTwitter2() {
         statuses = new ArrayList<>();
-        terms = new ArrayList<>();
+        words = new ArrayList<>();
     }
 
-    public List<String> getTerms() {
-        return terms;
+    public List<String> getWords() {
+        return words;
     }
 
     public int getFrequencyMax() {
@@ -28,12 +31,12 @@ class TJTwitter2 {
     @SuppressWarnings("unchecked")
     public void queryHandle(String handle) throws IOException {
         statuses.clear();
-        terms.clear();
+        words.clear();
         fetchTweets(handle);
-        terms = splitIntoWords(statuses);
+        words = splitIntoWords(statuses);
         removeCommonEnglishWords();
-        terms = sortAndRemoveEmpties(terms);
-        Optional<Integer> popularWord = mostPopularWord(terms);
+        words = sortAndRemoveEmpties(words);
+        Optional<Integer> popularWord = mostPopularWord(words);
         if (popularWord.isPresent()) {
             System.out.println("Max Frequency: " + popularWord.get());
             frequencyMax = popularWord.get();
@@ -56,7 +59,7 @@ class TJTwitter2 {
 
     /**
      * This method takes each status and splits them into individual words.
-     * Store each word in terms.
+     * Store each word in words.
      *
      * @param statuses
      */
@@ -73,25 +76,30 @@ class TJTwitter2 {
     }
 
     /**
-     * This method removes common English words from the list of terms.
+     * This method removes common English words from the list of words.
      * Remove all words found in commonWords.txt  from the argument list.
      * The count will not be given in commonWords.txt. You must count the number of words in this method.
      * This method should NOT throw an exception.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
-    public void removeCommonEnglishWords() {
+    public void removeCommonEnglishWords() throws IOException {
         //your code goes here
+        URL url = getClass().getResource("commonWords.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+        Set<String> commonWords = reader.lines().collect(Collectors.toSet());
+        reader.close();
 
+        words.removeAll(commonWords);
     }
 
     /**
      * <p>
-     * * This method sorts the words in terms in alphabetically (and lexicographic) order.
+     * * This method sorts the words in words in alphabetically (and lexicographic) order.
      * * You should use your sorting code you wrote earlier this year.
      * * Remove all empty strings while you are at it.
      * </p>
      *
-     * @param terms The terms.
+     * @param terms The words.
      */
     public List<String> sortAndRemoveEmpties(List<String> terms) {
         terms.sort(String::compareTo);
@@ -103,7 +111,7 @@ class TJTwitter2 {
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
-     * @param terms The terms.
+     * @param terms The words.
      * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
@@ -135,7 +143,6 @@ class TJTwitter2 {
      * @ return String the word without any punctuation, all lower case
      */
     public String removePunctuation(String s) {
-        //your code goes here
-        return "";
+        return s.replaceAll("[.!?\\-]", "");
     }
 }

@@ -1,7 +1,7 @@
 package edu.woodson;
 
 class Status {
-    private String text;
+    private final String text;
 
     public Status(String s) {
         text = s;

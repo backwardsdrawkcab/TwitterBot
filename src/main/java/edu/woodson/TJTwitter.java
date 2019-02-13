@@ -1,19 +1,20 @@
 package edu.woodson;
 
 import twitter4j.*;
+import twitter4j.Status;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 class TJTwitter {
-    private Twitter twitter;
-    private PrintStream consolePrint;
-    private List<Status> statuses;
+    private final Twitter twitter;
+    private final List<Status> statuses;
+    private final List<String> terms;
     private int numberOfTweets;
-    private List<String> terms;
     private String popularWord;
     private int frequencyMax;
 
@@ -21,9 +22,9 @@ class TJTwitter {
         // Makes an instance of Twitter - this is re-useable and thread safe.
         // Connects to Twitter and performs authorizations.
         twitter = TwitterFactory.getSingleton();
-        consolePrint = console;
-        statuses = new ArrayList<Status>();
-        terms = new ArrayList<String>();
+        PrintStream consolePrint = console;
+        statuses = new ArrayList<>();
+        terms = new ArrayList<>();
     }
 
     public List<String> getTerms() {
@@ -48,8 +49,8 @@ class TJTwitter {
      *
      * @param message a message you wish to Tweet out
      */
-    public void tweetOut(String message) throws TwitterException, IOException {
-
+    public twitter4j.Status tweetOut(String message) throws TwitterException, IOException {
+        return twitter.updateStatus(message);
     }
 
 
@@ -91,34 +92,55 @@ class TJTwitter {
     }
 
     /**
-     * This method takes each status and splits them into individual words.
+     * This method takes each status and splits them into individual terms.
      * Store the word in terms.
      */
-    public void splitIntoWords() {
-
+    public List<String> splitIntoWords() {
+        return statuses.stream()
+                .map(new Function<Status, String>() {
+                    @Override
+                    public String apply(Status status) {
+                        return status.getText();
+                    }
+                })
+                .map(StringTokenizer::new)
+                .map(Enumeration::asIterator)
+                .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
+                .map(Iterable::spliterator)
+                .flatMap(spliterator -> StreamSupport.stream(spliterator, false))
+                .map(Object::toString)
+                .collect(Collectors.toList());
 
     }
 
     /**
-     * This method removes common English words from the list of terms.
-     * Remove all words found in commonWords.txt  from the argument list.
-     * The count will not be given in commonWords.txt. You must count the number of words in this method.
+     * This method removes common English terms from the list of terms.
+     * Remove all terms found in commonWords.txt  from the argument list.
+     * The count will not be given in commonWords.txt. You must count the number of terms in this method.
      * This method should NOT throw an excpetion.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
-    public void removeCommonEnglishWords() {
+    public void removeCommonEnglishWords() throws IOException {
 
+        //your code goes here
+        URL url = getClass().getResource("commonWords.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+        Set<String> commonWords = reader.lines().collect(Collectors.toSet());
+        reader.close();
 
+        terms.removeAll(commonWords);
     }
 
     /**
-     * This method sorts the words in terms in alphabetically (and lexicographic) order.
+     * This method sorts the terms in terms in alphabetically (and lexicographic) order.
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
      */
     @SuppressWarnings("unchecked")
-    public void sortAndRemoveEmpties() {
-
+    public List<String> sortAndRemoveEmpties() {
+        terms.sort(String::compareTo);
+        terms.removeIf(s -> s.trim().isEmpty());
+        return terms;
 
     }
 
@@ -129,8 +151,18 @@ class TJTwitter {
      * @post will popopulate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public void mostPopularWord() {
+    public Optional<Integer> mostPopularWord() {
+        Map<String, Integer> wordMap = new HashMap<>();
+        terms.stream()
+                .map(String::toLowerCase)
+                .forEach(word -> {
+                    int value = wordMap.containsKey(word)
+                            ? wordMap.get(word) + 1
+                            : 0;
+                    wordMap.put(word, value);
+                });
 
+        return wordMap.values().stream().max(Integer::compareTo);
 
     }
 
@@ -138,15 +170,13 @@ class TJTwitter {
      * This method removes common punctuation from each individual word.
      * This method changes everything to lower case.
      * Consider reusing code you wrote for a previous lab.
-     * Consider if you want to remove the # or @ from your words. Could be interesting to keep (or remove).
+     * Consider if you want to remove the # or @ from your terms. Could be interesting to keep (or remove).
      *
      * @ param String  the word you wish to remove punctuation from
      * @ return String the word without any punctuation, all lower case
      */
     public String removePunctuation(String s) {
-
-        return "";
-
+        return s.replaceAll("[.!?\\-]", "");
     }
 
     /******************  Part IV *******************/
