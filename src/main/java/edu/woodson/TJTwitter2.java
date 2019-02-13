@@ -7,14 +7,14 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 class TJTwitter2 {
-    private List<TJ_Status2> statuses;
+    private List<Status> statuses;
     private int numberOfTweets;
     private List<String> terms;
     private String popularWord;
     private int frequencyMax;
 
     public TJTwitter2() {
-        statuses = new ArrayList<TJ_Status2>();
+        statuses = new ArrayList<Status>();
         terms = new ArrayList<String>();
     }
 
@@ -51,7 +51,7 @@ class TJTwitter2 {
 
     /**
      * This method reads a file of tweets and
-     * stores them in an arrayList of TJ_Status2 objects.
+     * stores them in an arrayList of Status objects.
      * Populates statuses.
      *
      * @param handle the text file
@@ -59,7 +59,7 @@ class TJTwitter2 {
     public void fetchTweets(String handle) throws IOException {
         Scanner scan = new Scanner(new File(handle));
         while (scan.hasNext())
-            statuses.add(new TJ_Status2(scan.nextLine()));
+            statuses.add(new Status(scan.nextLine()));
         numberOfTweets = statuses.size();
     }
 
@@ -69,9 +69,9 @@ class TJTwitter2 {
      *
      * @param statuses
      */
-    public List<String> splitIntoWords(List<TJ_Status2> statuses) {
+    public List<String> splitIntoWords(List<Status> statuses) {
         return statuses.stream()
-                .map(TJ_Status2::getText)
+                .map(Status::getText)
                 .map(StringTokenizer::new)
                 .map(Enumeration::asIterator)
                 .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
