@@ -4,6 +4,7 @@ package edu.woodson;// Name:
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -60,10 +61,6 @@ class TJTwitter2 {
     public TJTwitter2() throws IOException {
         statuses = new ArrayList<TJ_Status2>();
         terms = new ArrayList<String>();
-    }
-
-    private static void sort(Comparable[] array) {
-        //you will want additional helper methods
     }
 
     public List<String> getTerms() {
