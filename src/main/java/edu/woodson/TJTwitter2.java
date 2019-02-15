@@ -61,7 +61,7 @@ class TJTwitter2 {
      * This method takes each status and splits them into individual words.
      * Store each word in words.
      *
-     * @param statuses
+     * @param statuses The statuses to parse into words.
      */
     public List<String> splitIntoWords(List<Status> statuses) {
         return statuses.stream()

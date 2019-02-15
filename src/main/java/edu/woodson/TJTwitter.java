@@ -6,29 +6,27 @@ import twitter4j.Status;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 class TJTwitter {
     private final Twitter twitter;
     private final List<Status> statuses;
-    private final List<String> terms;
+    private List<String> words;
     private int numberOfTweets;
     private String popularWord;
     private int frequencyMax;
 
     public TJTwitter(PrintStream console) {
-        // Makes an instance of Twitter - this is re-useable and thread safe.
+        // Makes an instance of Twitter - this is re-usable and thread safe.
         // Connects to Twitter and performs authorizations.
         twitter = TwitterFactory.getSingleton();
-        PrintStream consolePrint = console;
         statuses = new ArrayList<>();
-        terms = new ArrayList<>();
+        words = new ArrayList<>();
     }
 
-    public List<String> getTerms() {
-        return terms;
+    public List<String> getWords() {
+        return words;
     }
 
     public int getNumberOfTweets() {
@@ -43,13 +41,13 @@ class TJTwitter {
         return frequencyMax;
     }
 
-    /******************  Part III - Tweet *******************/
+    /*****************  Part III - Tweet *******************/
     /**
      * This method tweets a given message.
      *
      * @param message a message you wish to Tweet out
      */
-    public twitter4j.Status tweetOut(String message) throws TwitterException, IOException {
+    public twitter4j.Status tweetOut(String message) throws TwitterException {
         return twitter.updateStatus(message);
     }
 
@@ -63,9 +61,9 @@ class TJTwitter {
     @SuppressWarnings("unchecked")
     public void queryHandle(String handle) throws TwitterException, IOException {
         statuses.clear();
-        terms.clear();
+        words.clear();
         fetchTweets(handle);
-        splitIntoWords();
+        words = splitIntoWords();
         removeCommonEnglishWords();
         sortAndRemoveEmpties();
         mostPopularWord();
@@ -78,8 +76,8 @@ class TJTwitter {
      * @param handle the Twitter handle (username) without the @sign
      */
     public void fetchTweets(String handle) throws TwitterException, IOException {
-        // Creates file for dedebugging purposes
-        PrintStream fileout = new PrintStream(new FileOutputStream("tweets.txt"));
+        // Creates file for debugging purposes
+        PrintStream out = new PrintStream(new FileOutputStream("tweets.txt"));
         Paging page = new Paging(1, 200);
         int p = 1;
         while (p <= 10) {
@@ -88,21 +86,16 @@ class TJTwitter {
             p++;
         }
         numberOfTweets = statuses.size();
-        fileout.println("Number of tweets = " + numberOfTweets);
+        out.println("Number of tweets = " + numberOfTweets);
     }
 
     /**
-     * This method takes each status and splits them into individual terms.
-     * Store the word in terms.
+     * This method takes each status and splits them into individual words.
+     * Store the word in words.
      */
     public List<String> splitIntoWords() {
         return statuses.stream()
-                .map(new Function<Status, String>() {
-                    @Override
-                    public String apply(Status status) {
-                        return status.getText();
-                    }
-                })
+                .map(Status::getText)
                 .map(StringTokenizer::new)
                 .map(Enumeration::asIterator)
                 .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
@@ -114,10 +107,10 @@ class TJTwitter {
     }
 
     /**
-     * This method removes common English terms from the list of terms.
-     * Remove all terms found in commonWords.txt  from the argument list.
-     * The count will not be given in commonWords.txt. You must count the number of terms in this method.
-     * This method should NOT throw an excpetion.  Use try/catch.
+     * This method removes common English words from the list of words.
+     * Remove all words found in commonWords.txt  from the argument list.
+     * The count will not be given in commonWords.txt. You must count the number of words in this method.
+     * This method should NOT throw an exception.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
     public void removeCommonEnglishWords() throws IOException {
@@ -128,19 +121,19 @@ class TJTwitter {
         Set<String> commonWords = reader.lines().collect(Collectors.toSet());
         reader.close();
 
-        terms.removeAll(commonWords);
+        words.removeAll(commonWords);
     }
 
     /**
-     * This method sorts the terms in terms in alphabetically (and lexicographic) order.
+     * This method sorts the words in words in alphabetically (and lexicographic) order.
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
      */
     @SuppressWarnings("unchecked")
     public List<String> sortAndRemoveEmpties() {
-        terms.sort(String::compareTo);
-        terms.removeIf(s -> s.trim().isEmpty());
-        return terms;
+        words.sort(String::compareTo);
+        words.removeIf(s -> s.trim().isEmpty());
+        return words;
 
     }
 
@@ -148,12 +141,12 @@ class TJTwitter {
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
-     * @post will popopulate the frequencyMax variable with the frequency of the most common word
+     * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
     public Optional<Integer> mostPopularWord() {
         Map<String, Integer> wordMap = new HashMap<>();
-        terms.stream()
+        words.stream()
                 .map(String::toLowerCase)
                 .forEach(word -> {
                     int value = wordMap.containsKey(word)
@@ -170,7 +163,7 @@ class TJTwitter {
      * This method removes common punctuation from each individual word.
      * This method changes everything to lower case.
      * Consider reusing code you wrote for a previous lab.
-     * Consider if you want to remove the # or @ from your terms. Could be interesting to keep (or remove).
+     * Consider if you want to remove the # or @ from your words. Could be interesting to keep (or remove).
      *
      * @ param String  the word you wish to remove punctuation from
      * @ return String the word without any punctuation, all lower case
@@ -182,6 +175,7 @@ class TJTwitter {
     /******************  Part IV *******************/
     public void investigate() {
         //Enter your code here
+        //TODO: complete
     }
 
     /**

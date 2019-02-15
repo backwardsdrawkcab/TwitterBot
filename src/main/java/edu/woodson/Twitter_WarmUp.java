@@ -3,7 +3,7 @@ package edu.woodson;// Name:
 
 import java.io.IOException;
 
-public class Twitter_Warmup {
+public class Twitter_WarmUp {
     public static void main(String[] args) throws IOException {
         TJTwitter2 twitter = new TJTwitter2();
 
@@ -12,10 +12,10 @@ public class Twitter_Warmup {
         String s2 = "!abc$d";
         String s3 = "ab:cd..";
         String s4 = "abc'd";
-        System.out.println(s1 + " without puncutation is " + twitter.removePunctuation(s1));
-        System.out.println(s2 + " without puncutation is " + twitter.removePunctuation(s2));
-        System.out.println(s3 + " without puncutation is " + twitter.removePunctuation(s3));
-        System.out.println(s4 + " without puncutation is " + twitter.removePunctuation(s4));
+        System.out.println(s1 + " without punctuation is " + twitter.removePunctuation(s1));
+        System.out.println(s2 + " without punctuation is " + twitter.removePunctuation(s2));
+        System.out.println(s3 + " without punctuation is " + twitter.removePunctuation(s3));
+        System.out.println(s4 + " without punctuation is " + twitter.removePunctuation(s4));
 
         System.out.println();
 
@@ -34,7 +34,7 @@ public class Twitter_Warmup {
     }
 }
 
-/****************** Sample output ******************
+/***************** Sample output ******************
 
  abcd? without puncutation is abcd
  !abc$d without puncutation is abc$d
@@ -56,4 +56,4 @@ public class Twitter_Warmup {
  Sorted: [11, 1949, 20yearold, 27, address, after, after, air, air, aircraft, aircraft, almost, also, always, article, article, attend, away, b29, barracks, base, base, basic, beauty, began, bomber, bright, british, call, chanute, chanute, cities, cities, cleanup, columbia, contest, contestants, contestants, contestants, continued, copy, crew, day, day, duty, engine, exhibition, field, finished, finishing, fly, force, force, found, frontpage, general, got, got, highlight, home, hoping, idea, ill, illinois, impressed, kay, kay, letter, letter, letters, listed, made, mail, mail, member, miss, miss, modification, months, moody, national, nebraska, newspaper, oct, omaha, only, other, other, pacific, pfc, photo, port, programs, regularly, remember, represented, return, return, ronco, scheduled, school, seattle, seven, sheppard, shocked, since, stationed, sun, tech, texas, three, time, training, training, transferred, transferred, vancouver, vancouver, very, washington, well, well, while, winner, winner, write, writing, writing, wrote, year]
  Most popular word: contestants
  Frequency: 3
- ***************************************************/
+ */

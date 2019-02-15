@@ -19,11 +19,11 @@ public class Twitter_Driver {
 
         // Part III - Tweet
         // Create and set a String called message below
-        // Uncomment this line to test, but then recomment so that the same
+        // Uncomment this line to test, but then recommend so that the same
         // tweet does not get sent out over and over.
    
       /*
-      String message="Gooooooooo Colonials!";
+      String message="Go Colonials!";
       bigBird.tweetOut(message);
       */
 
