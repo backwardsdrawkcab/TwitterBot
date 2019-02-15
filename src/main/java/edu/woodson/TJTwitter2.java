@@ -36,7 +36,7 @@ class TJTwitter2 {
         words = splitIntoWords(statuses);
         removeCommonEnglishWords();
         words = sortAndRemoveEmpties(words);
-        Optional<Integer> popularWord = mostPopularWord(words);
+        Optional<Integer> popularWord = highestFrequency(words);
         if (popularWord.isPresent()) {
             System.out.println("Max Frequency: " + popularWord.get());
             frequencyMax = popularWord.get();
@@ -115,7 +115,14 @@ class TJTwitter2 {
      * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public Optional<Integer> mostPopularWord(List<String> terms) {
+    public Optional<Integer> highestFrequency(List<String> terms) {
+        return generateWordMap(terms)
+                .values()
+                .stream()
+                .max(Integer::compareTo);
+    }
+
+    private Map<String, Integer> generateWordMap(List<String> terms) {
         Map<String, Integer> wordMap = new HashMap<>();
         terms.stream()
                 .map(String::toLowerCase)
@@ -125,8 +132,7 @@ class TJTwitter2 {
                             : 0;
                     wordMap.put(word, value);
                 });
-
-        return wordMap.values().stream().max(Integer::compareTo);
+        return wordMap;
     }
 
     public int getNumberOfTweets() {
@@ -144,5 +150,23 @@ class TJTwitter2 {
      */
     public String removePunctuation(String s) {
         return s.replaceAll("[.!?\\-]", "");
+    }
+
+    public String getMostPopularWord() {
+        return CollectionUtil.toSingle(getMostPopularWords());
+    }
+
+    private Set<String> getMostPopularWords() {
+        Optional<Integer> optional = highestFrequency(words);
+        if (optional.isPresent()) {
+            int highestFrequency = optional.get();
+            Map<String, Integer> wordMap = generateWordMap(words);
+            return wordMap.keySet()
+                    .stream()
+                    .filter(s -> wordMap.get(s).equals(highestFrequency))
+                    .collect(Collectors.toSet());
+        } else {
+            throw new IllegalArgumentException("No valid words found");
+        }
     }
 }
