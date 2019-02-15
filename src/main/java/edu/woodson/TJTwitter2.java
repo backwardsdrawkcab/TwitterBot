@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 class TJTwitter2 {
-    private final List<Status> statuses;
+    private final List<twitter4j.Status> statuses;
     private int numberOfTweets;
     private List<String> words;
     private int frequencyMax;
@@ -18,10 +18,6 @@ class TJTwitter2 {
     public TJTwitter2() {
         statuses = new ArrayList<>();
         words = new ArrayList<>();
-    }
-
-    public List<String> getWords() {
-        return words;
     }
 
     public int getFrequencyMax() {
@@ -63,9 +59,9 @@ class TJTwitter2 {
      *
      * @param statuses The statuses to parse into words.
      */
-    public List<String> splitIntoWords(List<Status> statuses) {
+    public List<String> splitIntoWords(List<twitter4j.Status> statuses) {
         return statuses.stream()
-                .map(Status::getText)
+                .map(twitter4j.Status::getText)
                 .map(StringTokenizer::new)
                 .map(Enumeration::asIterator)
                 .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
@@ -133,10 +129,6 @@ class TJTwitter2 {
                     wordMap.put(word, value);
                 });
         return wordMap;
-    }
-
-    public int getNumberOfTweets() {
-        return numberOfTweets;
     }
 
     /**
