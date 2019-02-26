@@ -17,10 +17,10 @@ class TJTwitter {
     private String popularWord;
     private int frequencyMax;
 
-    public TJTwitter(PrintStream console) {
+    public TJTwitter(PrintStream console, Twitter twitter) {
         // Makes an instance of Twitter - this is re-useable and thread safe.
         // Connects to Twitter and performs authorizations.
-        twitter = TwitterFactory.getSingleton();
+        this.twitter = twitter;
         consolePrint = console;
         statuses = new ArrayList<Status>();
         terms = new ArrayList<String>();
