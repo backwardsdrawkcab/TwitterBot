@@ -6,13 +6,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 class TJTwitter {
     private final Twitter twitter;
     private final List<Status> statuses;
-    private int numberOfTweets;
     private final List<String> terms;
+    private int numberOfTweets;
     private String popularWord;
     private int frequencyMax;
 
@@ -46,8 +50,8 @@ class TJTwitter {
      *
      * @param message a message you wish to Tweet out
      */
-    public void tweetOut(String message) throws TwitterException, IOException {
-
+    public Status tweetOut(String message) throws TwitterException, IOException {
+        return twitter.updateStatus(message);
     }
 
 
@@ -61,10 +65,16 @@ class TJTwitter {
         statuses.clear();
         terms.clear();
         fetchTweets(handle);
-        splitIntoWords();
+        splitIntoWords(toMessage(statuses));
         removeCommonEnglishWords();
         sortAndRemoveEmpties();
         mostPopularWord();
+    }
+
+    List<String> toMessage(List<Status> statuses) {
+        return statuses.stream()
+                .map(Status::getText)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -90,10 +100,18 @@ class TJTwitter {
     /**
      * This method takes each status and splits them into individual words.
      * Store the word in terms.
+     *
+     * @param statuses The statuses.
      */
-    private void splitIntoWords() {
-
-
+    private List<String> splitIntoWords(List<String> statuses) {
+        return statuses.stream()
+                .map(StringTokenizer::new)
+                .map(Enumeration::asIterator)
+                .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
+                .map(Iterable::spliterator)
+                .flatMap(objectSpliterator -> StreamSupport.stream(objectSpliterator, false))
+                .map(Object::toString)
+                .collect(Collectors.toList());
     }
 
     /**

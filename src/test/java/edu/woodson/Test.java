@@ -19,7 +19,7 @@ class Test {
 
         Twitter twitter = new TwitterFactory(builder).getInstance();
         try {
-            Status status = twitter.updateStatus("Hello World!");
+            Status status = twitter.updateStatus("I have no idea what I'm doing!!!! :D");
             System.out.println(status);
         } catch (TwitterException e) {
             e.printStackTrace();
