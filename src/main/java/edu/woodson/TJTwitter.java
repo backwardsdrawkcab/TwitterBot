@@ -20,11 +20,10 @@ class TJTwitter {
     private String popularWord;
     private int frequencyMax;
 
-    public TJTwitter(PrintStream console) {
+    public TJTwitter() {
         // Makes an instance of Twitter - this is re-usable and thread safe.
         // Connects to Twitter and performs authorizations.
         twitter = TwitterFactory.getSingleton();
-        PrintStream consolePrint = console;
         statuses = new ArrayList<>();
         terms = new ArrayList<>();
     }
@@ -71,7 +70,7 @@ class TJTwitter {
         mostPopularWord();
     }
 
-    List<String> toMessage(List<Status> statuses) {
+    private List<String> toMessage(List<Status> statuses) {
         return statuses.stream()
                 .map(Status::getText)
                 .collect(Collectors.toList());
@@ -103,7 +102,7 @@ class TJTwitter {
      *
      * @param statuses The statuses.
      */
-    private List<String> splitIntoWords(List<String> statuses) {
+    List<String> splitIntoWords(List<String> statuses) {
         return statuses.stream()
                 .map(StringTokenizer::new)
                 .map(Enumeration::asIterator)

@@ -15,7 +15,7 @@ class Twitter_Driver {
         // PART III - Connect
         // set classpath, edit properties file
 
-        TJTwitter bigBird = new TJTwitter(consolePrint);
+        TJTwitter bigBird = new TJTwitter();
 
         // Part III - Tweet
         // Create and set a String called message below
