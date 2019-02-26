@@ -1,7 +1,11 @@
 package edu.woodson;// Name:
 // Date:
 
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -15,18 +19,26 @@ public class Twitter_Driver {
 
         // PART III - Connect
         // set classpath, edit properties file
+        Configuration builder = new ConfigurationBuilder()
+                .setDebugEnabled(true)
+                .setOAuthConsumerKey("egk7giRtajHZYXBbKAjzSVhWb")
+                .setOAuthConsumerSecret("bLiAVPF6q14TIztSlsatAKRGUenRKQC5MKtWEfAB8xTfqweeHr")
+                .setOAuthAccessToken("1059514626868740096-T5G4cTrK6NExdx1j33ss69X9ODnMq4")
+                .setOAuthAccessTokenSecret("pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY")
+                .build();
 
-        TJTwitter bigBird = new TJTwitter(consolePrint);
+        Twitter twitter = new TwitterFactory(builder).getInstance();
+        TJTwitter bigBird = new TJTwitter(consolePrint, twitter);
 
         // Part III - Tweet
         // Create and set a String called message below
         // Uncomment this line to test, but then recomment so that the same
         // tweet does not get sent out over and over.
    
-      /*
-      String message="Gooooooooo Colonials!";
-      bigBird.tweetOut(message);
-      */
+
+//      String message="Gooooooooo Colonials!";
+//      twitter.updateStatus(message);
+
 
 
         // PART III - Test
