@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-public class Twitter_Driver {
-    private static PrintStream consolePrint;
+class Twitter_Driver {
 
     public static void main(String[] args) throws TwitterException, IOException {
-        consolePrint = System.out; // this preserves the standard output so we can get to it later
+        PrintStream consolePrint = System.out;
 
         // PART III - Connect
         // set classpath, edit properties file

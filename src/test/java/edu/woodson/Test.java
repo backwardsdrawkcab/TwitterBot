@@ -7,7 +7,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class Test {
+class Test {
     public static void main(String[] args) {
         Configuration builder = new ConfigurationBuilder()
                 .setDebugEnabled(true)

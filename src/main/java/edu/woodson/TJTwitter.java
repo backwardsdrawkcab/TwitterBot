@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 class TJTwitter {
-    private Twitter twitter;
-    private PrintStream consolePrint;
-    private List<Status> statuses;
+    private final Twitter twitter;
+    private final List<Status> statuses;
     private int numberOfTweets;
-    private List<String> terms;
+    private final List<String> terms;
     private String popularWord;
     private int frequencyMax;
 
@@ -21,9 +20,9 @@ class TJTwitter {
         // Makes an instance of Twitter - this is re-useable and thread safe.
         // Connects to Twitter and performs authorizations.
         twitter = TwitterFactory.getSingleton();
-        consolePrint = console;
-        statuses = new ArrayList<Status>();
-        terms = new ArrayList<String>();
+        PrintStream consolePrint = console;
+        statuses = new ArrayList<>();
+        terms = new ArrayList<>();
     }
 
     public List<String> getTerms() {
@@ -42,7 +41,6 @@ class TJTwitter {
         return frequencyMax;
     }
 
-    /******************  Part III - Tweet *******************/
     /**
      * This method tweets a given message.
      *
@@ -53,7 +51,6 @@ class TJTwitter {
     }
 
 
-    /******************  Part III - Test *******************/
     /**
      * This method queries the tweets of a particular user's handle.
      *
@@ -76,7 +73,7 @@ class TJTwitter {
      *
      * @param handle the Twitter handle (username) without the @sign
      */
-    public void fetchTweets(String handle) throws TwitterException, IOException {
+    private void fetchTweets(String handle) throws TwitterException, IOException {
         // Creates file for dedebugging purposes
         PrintStream fileout = new PrintStream(new FileOutputStream("tweets.txt"));
         Paging page = new Paging(1, 200);
@@ -94,7 +91,7 @@ class TJTwitter {
      * This method takes each status and splits them into individual words.
      * Store the word in terms.
      */
-    public void splitIntoWords() {
+    private void splitIntoWords() {
 
 
     }
@@ -106,7 +103,7 @@ class TJTwitter {
      * This method should NOT throw an excpetion.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
-    public void removeCommonEnglishWords() {
+    private void removeCommonEnglishWords() {
 
 
     }
@@ -117,7 +114,7 @@ class TJTwitter {
      * Remove all empty strings while you are at it.
      */
     @SuppressWarnings("unchecked")
-    public void sortAndRemoveEmpties() {
+    private void sortAndRemoveEmpties() {
 
 
     }
@@ -129,7 +126,7 @@ class TJTwitter {
      * @post will popopulate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public void mostPopularWord() {
+    private void mostPopularWord() {
 
 
     }

@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Scanner;
 
 class TJTwitter2 {
-    private List<TJ_Status2> statuses;
+    private final List<TJ_Status2> statuses;
     private int numberOfTweets;
-    private List<String> terms;
+    private final List<String> terms;
     private String popularWord;
     private int frequencyMax;
 
     public TJTwitter2() throws IOException {
-        statuses = new ArrayList<TJ_Status2>();
-        terms = new ArrayList<String>();
+        statuses = new ArrayList<>();
+        terms = new ArrayList<>();
     }
 
     private static void sort(Comparable[] array) {
@@ -49,7 +49,7 @@ class TJTwitter2 {
         mostPopularWord();
     }
 
-    public int getNumberOfTweets() {
+    private int getNumberOfTweets() {
         return numberOfTweets;
     }
 
@@ -60,7 +60,7 @@ class TJTwitter2 {
      *
      * @param handle the text file
      */
-    public void fetchTweets(String handle) throws IOException {
+    private void fetchTweets(String handle) throws IOException {
         Scanner scan = new Scanner(new File(handle));
         while (scan.hasNext())
             statuses.add(new TJ_Status2(scan.nextLine()));
@@ -71,7 +71,7 @@ class TJTwitter2 {
      * This method takes each status and splits them into individual words.
      * Store each word in terms.
      */
-    public void splitIntoWords() {
+    private void splitIntoWords() {
         //your code goes here
 
     }
@@ -83,7 +83,7 @@ class TJTwitter2 {
      * This method should NOT throw an excpetion.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
-    public void removeCommonEnglishWords() {
+    private void removeCommonEnglishWords() {
         //your code goes here
 
     }
@@ -94,7 +94,7 @@ class TJTwitter2 {
      * Remove all empty strings while you are at it.
      */
     @SuppressWarnings("unchecked")
-    public void sortAndRemoveEmpties() {
+    private void sortAndRemoveEmpties() {
         //your code goes here
 
 
@@ -107,7 +107,7 @@ class TJTwitter2 {
      * @post will popopulate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public void mostPopularWord() {
+    private void mostPopularWord() {
         //your code goes here
     }
 
