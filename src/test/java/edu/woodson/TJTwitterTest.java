@@ -7,10 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import twitter4j.Twitter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,7 +16,7 @@ class TJTwitterTest {
     private TJTwitter twitter;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         twitter = new TJTwitter(Mockito.mock(Twitter.class));
     }
 
@@ -93,7 +90,13 @@ class TJTwitterTest {
 
     @Test
     void calculateMax() {
-
+        Map<String, Long> map = new HashMap<>();
+        map.put("test0", 1L);
+        map.put("test1", 2L);
+        map.put("test2", 3L);
+        Optional<Long> max = twitter.calculateMax(map);
+        assertTrue(max.isPresent());
+        assertEquals(3L, (long) max.get());
     }
 
     @Test
