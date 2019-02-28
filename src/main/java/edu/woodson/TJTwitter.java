@@ -13,6 +13,9 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 class TJTwitter {
+    private final Twitter twitter;
+    private final List<Status> statuses;
+    private final List<String> terms;
     private int numberOfTweets;
     private String popularWord;
     private int frequencyMax;
@@ -25,6 +28,14 @@ class TJTwitter {
         consolePrint = console;
         statuses = new ArrayList<Status>();
         terms = new ArrayList<String>();
+=======
+    public TJTwitter() {
+        // Makes an instance of Twitter - this is re-usable and thread safe.
+        // Connects to Twitter and performs authorizations.
+        twitter = TwitterFactory.getSingleton();
+        statuses = new ArrayList<>();
+        terms = new ArrayList<>();
+>>>>>>> pr/10
     }
 
     public List<String> getTerms() {
@@ -48,6 +59,8 @@ class TJTwitter {
      *
      * @param message a message you wish to Tweet out
      */
+    public Status tweetOut(String message) throws TwitterException, IOException {
+        return twitter.updateStatus(message);
     }
 
 
@@ -61,9 +74,16 @@ class TJTwitter {
         statuses.clear();
         terms.clear();
         fetchTweets(handle);
+        splitIntoWords(toMessage(statuses));
         removeCommonEnglishWords();
         sortAndRemoveEmpties();
         mostPopularWord();
+    }
+
+    private List<String> toMessage(List<Status> statuses) {
+        return statuses.stream()
+                .map(Status::getText)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -72,6 +92,8 @@ class TJTwitter {
      *
      * @param handle the Twitter handle (username) without the @sign
      */
+    private void fetchTweets(String handle) throws TwitterException, IOException {
+        // Creates file for debugging purposes
         PrintStream fileout = new PrintStream(new FileOutputStream("tweets.txt"));
         Paging page = new Paging(1, 200);
         int p = 1;
@@ -90,15 +112,24 @@ class TJTwitter {
      *
      * @param statuses The statuses.
      */
+    List<String> splitIntoWords(List<String> statuses) {
+        return statuses.stream()
+                .map(StringTokenizer::new)
+                .map(Enumeration::asIterator)
+                .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
+                .map(Iterable::spliterator)
+                .flatMap(objectSpliterator -> StreamSupport.stream(objectSpliterator, false))
+                .map(Object::toString)
+                .collect(Collectors.toList());
     }
 
     /**
      * This method removes common English words from the list of terms.
      * Remove all words found in commonWords.txt  from the argument list.
      * The count will not be given in commonWords.txt. You must count the number of words in this method.
+     * This method should NOT throw an exception.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
-    public void removeCommonEnglishWords() {
     private void removeCommonEnglishWords() {
 
 
@@ -110,6 +141,7 @@ class TJTwitter {
      * Remove all empty strings while you are at it.
      */
     @SuppressWarnings("unchecked")
+    private void sortAndRemoveEmpties() {
 
 
     }
@@ -121,6 +153,7 @@ class TJTwitter {
      * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
+    private void mostPopularWord() {
 
 
     }
