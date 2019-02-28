@@ -39,7 +39,8 @@ class TJTwitterTest {
 
     @Test
     void removePunctuation() {
-        assertEquals("shouldremovepunctuation", );
+        TJTwitter tjTwitter = new TJTwitter(Mockito.mock(Twitter.class));
+        assertEquals("shouldremovepunctuationbutnot'", tjTwitter.removePunctuation("?Should,Remove,Punctuation!ButNot'"));
     }
 
     @Test

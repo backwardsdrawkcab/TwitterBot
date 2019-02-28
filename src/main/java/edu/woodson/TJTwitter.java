@@ -134,7 +134,6 @@ class TJTwitter {
     @SuppressWarnings("unchecked")
     public void sortAndRemoveEmpties() {
 
-
     }
 
     /**
@@ -159,7 +158,7 @@ class TJTwitter {
      * @ return String the word without any punctuation, all lower case
      */
     public String removePunctuation(String s) {
-        return s.replaceAll("[^a-zA-Z]", "").toLowerCase();
+        return s.replaceAll("[^a-z'A-Z]", "").toLowerCase();
     }
 
     /******************  Part IV *******************/
