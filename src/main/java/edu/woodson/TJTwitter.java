@@ -5,10 +5,7 @@ import twitter4j.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -68,7 +65,7 @@ class TJTwitter {
         fetchTweets(handle);
         terms.addAll(splitIntoWords(toMessage(statuses)));
         removeCommonEnglishWords();
-        sortAndRemoveEmpties();
+        terms.addAll(sortAndRemoveEmpties(terms));
         mostPopularWord();
     }
 
@@ -130,17 +127,27 @@ class TJTwitter {
      * This method sorts the words in terms in alphabetically (and lexicographic) order.
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
+     * @param terms
      */
     @SuppressWarnings("unchecked")
-    public void sortAndRemoveEmpties() {
+    public List<String> sortAndRemoveEmpties(List<String> terms) {
+        Collections.sort(removeEmptyStrings(terms));
+        return terms;
+    }
 
+    private List<String> removeEmptyStrings(List<String> terms) {
+        for (String s : terms) {
+            if (s.trim().equals(""))
+                terms.remove(s);
+        }
+        return terms;
     }
 
     /**
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
-     * @post will populate the frequencyMax variable with the frequency of the most common word
+     * post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
     public void mostPopularWord() {
