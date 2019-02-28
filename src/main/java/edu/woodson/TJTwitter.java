@@ -66,8 +66,7 @@ class TJTwitter {
         fetchTweets(handle);
         words.addAll(splitIntoWords(toMessage(statuses)));
         removeCommonEnglishWords();
-        sortAndRemoveEmpties();
-
+        terms.addAll(sortAndRemoveEmpties(terms));
         this.mostPopularWord = CollectionUtil.toSingle(mostPopularWord(words));
     }
 
@@ -129,17 +128,27 @@ class TJTwitter {
      * This method sorts the words in words in alphabetically (and lexicographic) order.
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
+     * @param terms
      */
     @SuppressWarnings("unchecked")
-    public void sortAndRemoveEmpties() {
+    public List<String> sortAndRemoveEmpties(List<String> terms) {
+        Collections.sort(removeEmptyStrings(terms));
+        return terms;
+    }
 
-
+    private List<String> removeEmptyStrings(List<String> terms) {
+        for (String s : terms) {
+            if (s.trim().equals(""))
+                terms.remove(s);
+        }
+        return terms;
     }
 
     /**
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
+     * post will populate the frequencyMax variable with the frequency of the most common word
      * @param words The words to search.
      * @post will populate the frequencyMax variable with the frequency of the most common word
      */
@@ -189,9 +198,7 @@ class TJTwitter {
      * @ return String the word without any punctuation, all lower case
      */
     public String removePunctuation(String s) {
-
-        return "";
-
+        return s.replaceAll("[^a-z'A-Z]", "").toLowerCase();
     }
 
     /******************  Part IV *******************/
