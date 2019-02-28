@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import twitter4j.Twitter;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

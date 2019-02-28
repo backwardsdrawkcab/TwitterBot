@@ -20,7 +20,7 @@ class TJTwitter {
     private String popularWord;
     private int frequencyMax;
 
-    public TJTwitter() {
+    public TJTwitter(Twitter twitter) {
         // Makes an instance of Twitter - this is re-usable and thread safe.
         // Connects to Twitter and performs authorizations.
         this.twitter = twitter;
