@@ -149,19 +149,20 @@ class TJTwitter {
         }
 
         Map<String, Long> map = createFrequencyMap(words);
-        long max = calculateMax(words, map);
+        Optional<Long> maxOptional = calculateMax(map);
+        if (!maxOptional.isPresent()) {
+            throw new IllegalArgumentException("No maximum found for " + words);
+        }
+
+        long max = maxOptional.get();
         return map.keySet()
                 .stream()
                 .filter(s -> map.get(s).equals(max))
                 .collect(Collectors.toSet());
     }
 
-    Long calculateMax(List<String> words, Map<String, Long> map) {
-        Optional<Long> maxOptional = map.values().stream().max(Long::compareTo);
-        if (!maxOptional.isPresent()) {
-            throw new IllegalArgumentException("No maximum found for " + words);
-        }
-        return maxOptional.get();
+    Optional<Long> calculateMax(Map<String, Long> map) {
+        return map.values().stream().max(Long::compareTo);
     }
 
     Map<String, Long> createFrequencyMap(List<String> words) {

@@ -1,5 +1,6 @@
 package edu.woodson;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -15,6 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TJTwitterTest {
+    private TJTwitter twitter;
+
+    @BeforeEach
+    void beforeEach(){
+        twitter = new TJTwitter(Mockito.mock(Twitter.class));
+    }
 
     @Test
     void getTerms() {
@@ -55,15 +62,13 @@ class TJTwitterTest {
     @ParameterizedTest
     @ValueSource(strings = {"I", "have", "a", "pen,", "an", "apple!"})
     void splitIntoWords(String word) {
-        TJTwitter tjTwitter = new TJTwitter(Mockito.mock(Twitter.class));
-        List<String> words = tjTwitter.splitIntoWords(Collections.singletonList("I have a pen, I have an apple!"));
+        List<String> words = twitter.splitIntoWords(Collections.singletonList("I have a pen, I have an apple!"));
         assertEquals(8, words.size());
         assertTrue(words.contains(word));
     }
 
     @Test
     void mostPopularWord() {
-        TJTwitter twitter = new TJTwitter(Mockito.mock(Twitter.class));
         Set<String> strings = twitter.mostPopularWord(Arrays.asList("test0", "test", "test1", "test2"));
 
         assertEquals(1, strings.size());
@@ -88,6 +93,7 @@ class TJTwitterTest {
 
     @Test
     void calculateMax() {
+
     }
 
     @Test
