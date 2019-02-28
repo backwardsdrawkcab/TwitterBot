@@ -34,12 +34,14 @@ public class Twitter_Driver {
         // Create and set a String called message below
         // Uncomment this line to test, but then recomment so that the same
         // tweet does not get sent out over and over.
-   
 
 //      String message="Gooooooooo Colonials!";
 //      twitter.updateStatus(message);
-
-
+  
+      /*
+      String message="Go Colonials!";
+      bigBird.tweetOut(message);
+      */
 
         // PART III - Test
         // Choose a public Twitter user's handle
