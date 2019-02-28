@@ -69,4 +69,28 @@ class TJTwitterTest {
         assertEquals(1, strings.size());
         assertEquals("test1", CollectionUtil.toSingle(strings));
     }
+
+    @Test
+    void getWords() {
+    }
+
+    @Test
+    void fetchTweets() {
+    }
+
+    @Test
+    void removeCommonEnglishWords() {
+    }
+
+    @Test
+    void sortAndRemoveEmpties() {
+    }
+
+    @Test
+    void calculateMax() {
+    }
+
+    @Test
+    void createFrequencyMap() {
+    }
 }

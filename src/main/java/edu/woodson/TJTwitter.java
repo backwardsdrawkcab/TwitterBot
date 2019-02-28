@@ -139,31 +139,37 @@ class TJTwitter {
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
-     * @post will populate the frequencyMax variable with the frequency of the most common word
      * @param words The words to search.
+     * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
     public Set<String> mostPopularWord(List<String> words) {
-        if(words.isEmpty()){
+        if (words.isEmpty()) {
             throw new IllegalArgumentException("No words found for " + words);
         }
 
-        Map<String, Long> map = words.stream().collect(Collectors.toMap(s -> s, string -> this.words.stream()
-                .filter(s -> s.equals(string))
-                .distinct()
-                .count())
-        );
-
-        Optional<Long> maxOptional = map.values().stream().max(Long::compareTo);
-        if (!maxOptional.isPresent()) {
-            throw new IllegalArgumentException("No maximum found for " + words);
-        }
-
-        long max = maxOptional.get();
+        Map<String, Long> map = createFrequencyMap(words);
+        long max = calculateMax(words, map);
         return map.keySet()
                 .stream()
                 .filter(s -> map.get(s).equals(max))
                 .collect(Collectors.toSet());
+    }
+
+    Long calculateMax(List<String> words, Map<String, Long> map) {
+        Optional<Long> maxOptional = map.values().stream().max(Long::compareTo);
+        if (!maxOptional.isPresent()) {
+            throw new IllegalArgumentException("No maximum found for " + words);
+        }
+        return maxOptional.get();
+    }
+
+    Map<String, Long> createFrequencyMap(List<String> words) {
+        return words.stream().collect(Collectors.toMap(s -> s, string -> this.words.stream()
+                .filter(s -> s.equals(string))
+                .distinct()
+                .count())
+        );
     }
 
     /**
