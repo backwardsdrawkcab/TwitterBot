@@ -28,7 +28,7 @@ public class Twitter_Driver {
                 .build();
 
         Twitter twitter = new TwitterFactory(builder).getInstance();
-        TJTwitter bigBird = new TJTwitter(consolePrint, twitter);
+        TJTwitter bigBird = new TJTwitter(twitter);
 
         // Part III - Tweet
         // Create and set a String called message below

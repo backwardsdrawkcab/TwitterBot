@@ -6,24 +6,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 class TJTwitter {
     private Twitter twitter;
-    private PrintStream consolePrint;
     private List<Status> statuses;
     private int numberOfTweets;
     private List<String> terms;
     private String popularWord;
     private int frequencyMax;
 
-    public TJTwitter(PrintStream console, Twitter twitter) {
-        // Makes an instance of Twitter - this is re-useable and thread safe.
+    public TJTwitter(Twitter twitter) {
+        // Makes an instance of Twitter - this is re-usable and thread safe.
         // Connects to Twitter and performs authorizations.
         this.twitter = twitter;
-        consolePrint = console;
-        statuses = new ArrayList<Status>();
-        terms = new ArrayList<String>();
+        statuses = new ArrayList<>();
+        terms = new ArrayList<>();
     }
 
     public List<String> getTerms() {
@@ -64,10 +66,16 @@ class TJTwitter {
         statuses.clear();
         terms.clear();
         fetchTweets(handle);
-        splitIntoWords();
+        terms.addAll(splitIntoWords(toMessage(statuses)));
         removeCommonEnglishWords();
         sortAndRemoveEmpties();
         mostPopularWord();
+    }
+
+    private List<String> toMessage(List<Status> statuses) {
+        return statuses.stream()
+                .map(Status::getText)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -94,8 +102,15 @@ class TJTwitter {
      * This method takes each status and splits them into individual words.
      * Store the word in terms.
      */
-    public void splitIntoWords() {
-
+    public List<String> splitIntoWords(List<String> statuses) {
+        return statuses.stream()
+                .map(StringTokenizer::new)
+                .map(Enumeration::asIterator)
+                .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
+                .map(Iterable::spliterator)
+                .flatMap(objectSpliterator -> StreamSupport.stream(objectSpliterator, false))
+                .map(Object::toString)
+                .collect(Collectors.toList());
 
     }
 
