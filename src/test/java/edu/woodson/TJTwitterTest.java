@@ -6,10 +6,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import twitter4j.Twitter;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TJTwitterTest {
 
@@ -60,5 +63,10 @@ class TJTwitterTest {
 
     @Test
     void mostPopularWord() {
+        TJTwitter twitter = new TJTwitter(Mockito.mock(Twitter.class));
+        Set<String> strings = twitter.mostPopularWord(Arrays.asList("test0", "test", "test1", "test2"));
+
+        assertEquals(1, strings.size());
+        assertEquals("test1", CollectionUtil.toSingle(strings));
     }
 }
