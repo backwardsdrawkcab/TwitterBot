@@ -101,5 +101,11 @@ class TJTwitterTest {
 
     @Test
     void createFrequencyMap() {
+        Map<String, Long> map = twitter.createFrequencyMap(Arrays.asList("test0", "test1", "test1"));
+        assertEquals(2, map.size());
+        assertTrue(map.containsKey("test0"));
+        assertTrue(map.containsKey("test1"));
+        assertEquals(1L, (long) map.get("test0"));
+        assertEquals(2L, (long) map.get("test1"));
     }
 }

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -166,11 +167,16 @@ class TJTwitter {
     }
 
     Map<String, Long> createFrequencyMap(List<String> words) {
-        return words.stream().collect(Collectors.toMap(s -> s, string -> this.words.stream()
+        return words.stream().collect(Collectors.toMap(Function.identity(), string -> words.stream()
                 .filter(s -> s.equals(string))
-                .distinct()
-                .count())
-        );
+                .count(), Long::max));
+
+  /*      return words.stream().collect(Collectors.toMap(
+                s -> s,
+                string ->
+                ),
+                new BinaryOperator<Long>();
+        );*/
     }
 
     /**
