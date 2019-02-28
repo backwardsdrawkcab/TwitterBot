@@ -3,6 +3,8 @@ package edu.woodson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
+import twitter4j.Twitter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +53,7 @@ class TJTwitterTest {
     @ParameterizedTest
     @ValueSource(strings = {"I", "have", "a", "pen,", "an", "apple!"})
     void splitIntoWords(String word) {
-        TJTwitter tjTwitter = new TJTwitter();
+        TJTwitter tjTwitter = new TJTwitter(Mockito.mock(Twitter.class));
         List<String> words = tjTwitter.splitIntoWords(Collections.singletonList("I have a pen, I have an apple!"));
         assertEquals(8, words.size());
         assertTrue(words.contains(word));
