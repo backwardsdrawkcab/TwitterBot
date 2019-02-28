@@ -159,9 +159,7 @@ class TJTwitter {
      * @ return String the word without any punctuation, all lower case
      */
     public String removePunctuation(String s) {
-
-        return "";
-
+        return s.replaceAll("[^a-zA-Z]", "").toLowerCase();
     }
 
     /******************  Part IV *******************/

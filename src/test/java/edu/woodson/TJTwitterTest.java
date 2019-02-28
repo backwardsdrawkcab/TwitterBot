@@ -39,6 +39,7 @@ class TJTwitterTest {
 
     @Test
     void removePunctuation() {
+        assertEquals("shouldremovepunctuation", );
     }
 
     @Test
