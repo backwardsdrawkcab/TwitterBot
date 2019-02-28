@@ -66,7 +66,7 @@ class TJTwitterTest {
 
     @Test
     void mostPopularWord() {
-        Set<String> strings = twitter.mostPopularWord(Arrays.asList("test0", "test", "test1", "test2"));
+        Set<String> strings = twitter.mostPopularWord(Arrays.asList("test0", "test1", "test1", "test2"));
 
         assertEquals(1, strings.size());
         assertEquals("test1", CollectionUtil.toSingle(strings));
