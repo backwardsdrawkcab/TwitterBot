@@ -66,7 +66,7 @@ class TJTwitter {
         fetchTweets(handle);
         words.addAll(splitIntoWords(toMessage(statuses)));
         removeCommonEnglishWords();
-        terms.addAll(sortAndRemoveEmpties(terms));
+        words.addAll(sortAndRemoveEmpties(words));
         this.mostPopularWord = CollectionUtil.toSingle(mostPopularWord(words));
     }
 
