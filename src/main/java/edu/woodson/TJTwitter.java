@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -13,8 +14,8 @@ class TJTwitter {
     private Twitter twitter;
     private List<Status> statuses;
     private int numberOfTweets;
-    private List<String> terms;
-    private String popularWord;
+    private List<String> words;
+    private String mostPopularWord;
     private int frequencyMax;
 
     public TJTwitter(Twitter twitter) {
@@ -22,11 +23,11 @@ class TJTwitter {
         // Connects to Twitter and performs authorizations.
         this.twitter = twitter;
         this.statuses = new ArrayList<>();
-        this.terms = new ArrayList<>();
+        this.words = new ArrayList<>();
     }
 
-    public List<String> getTerms() {
-        return terms;
+    public List<String> getWords() {
+        return words;
     }
 
     public int getNumberOfTweets() {
@@ -34,7 +35,7 @@ class TJTwitter {
     }
 
     public String getMostPopularWord() {
-        return popularWord;
+        return mostPopularWord;
     }
 
     public int getFrequencyMax() {
@@ -61,12 +62,12 @@ class TJTwitter {
     @SuppressWarnings("unchecked")
     public void queryHandle(String handle) throws TwitterException, IOException {
         statuses.clear();
-        terms.clear();
+        words.clear();
         fetchTweets(handle);
-        terms.addAll(splitIntoWords(toMessage(statuses)));
+        words.addAll(splitIntoWords(toMessage(statuses)));
         removeCommonEnglishWords();
         terms.addAll(sortAndRemoveEmpties(terms));
-        mostPopularWord();
+        this.mostPopularWord = CollectionUtil.toSingle(mostPopularWord(words));
     }
 
     private List<String> toMessage(List<Status> statuses) {
@@ -82,7 +83,7 @@ class TJTwitter {
      * @param handle the Twitter handle (username) without the @sign
      */
     public void fetchTweets(String handle) throws TwitterException, IOException {
-        // Creates file for dedebugging purposes
+        // Creates file for debugging purposes
         PrintStream fileout = new PrintStream(new FileOutputStream("tweets.txt"));
         Paging page = new Paging(1, 200);
         int p = 1;
@@ -97,7 +98,7 @@ class TJTwitter {
 
     /**
      * This method takes each status and splits them into individual words.
-     * Store the word in terms.
+     * Store the word in words.
      */
     public List<String> splitIntoWords(List<String> statuses) {
         return statuses.stream()
@@ -112,7 +113,7 @@ class TJTwitter {
     }
 
     /**
-     * This method removes common English words from the list of terms.
+     * This method removes common English words from the list of words.
      * Remove all words found in commonWords.txt  from the argument list.
      * The count will not be given in commonWords.txt. You must count the number of words in this method.
      * This method should NOT throw an exception.  Use try/catch.
@@ -124,7 +125,7 @@ class TJTwitter {
     }
 
     /**
-     * This method sorts the words in terms in alphabetically (and lexicographic) order.
+     * This method sorts the words in words in alphabetically (and lexicographic) order.
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
      * @param terms
@@ -148,11 +149,43 @@ class TJTwitter {
      * Consider case - should it be case sensitive?  The choice is yours.
      *
      * post will populate the frequencyMax variable with the frequency of the most common word
+     * @param words The words to search.
+     * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public void mostPopularWord() {
+    public Set<String> mostPopularWord(List<String> words) {
+        if (words.isEmpty()) {
+            throw new IllegalArgumentException("No words found for " + words);
+        }
 
+        Map<String, Long> map = createFrequencyMap(words);
+        Optional<Long> maxOptional = calculateMax(map);
+        if (!maxOptional.isPresent()) {
+            throw new IllegalArgumentException("No maximum found for " + words);
+        }
 
+        long max = maxOptional.get();
+        return map.keySet()
+                .stream()
+                .filter(s -> map.get(s).equals(max))
+                .collect(Collectors.toSet());
+    }
+
+    Optional<Long> calculateMax(Map<String, Long> map) {
+        return map.values().stream().max(Long::compareTo);
+    }
+
+    Map<String, Long> createFrequencyMap(List<String> words) {
+        return words.stream().collect(Collectors.toMap(Function.identity(), string -> words.stream()
+                .filter(s -> s.equals(string))
+                .count(), Long::max));
+
+  /*      return words.stream().collect(Collectors.toMap(
+                s -> s,
+                string ->
+                ),
+                new BinaryOperator<Long>();
+        );*/
     }
 
     /**
