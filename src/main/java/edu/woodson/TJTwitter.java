@@ -6,17 +6,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 class TJTwitter {
-    private Twitter twitter;
-    private PrintStream consolePrint;
-    private List<Status> statuses;
     private int numberOfTweets;
-    private List<String> terms;
     private String popularWord;
     private int frequencyMax;
 
+<<<<<<< HEAD
     public TJTwitter(PrintStream console, Twitter twitter) {
         // Makes an instance of Twitter - this is re-useable and thread safe.
         // Connects to Twitter and performs authorizations.
@@ -42,18 +43,14 @@ class TJTwitter {
         return frequencyMax;
     }
 
-    /******************  Part III - Tweet *******************/
     /**
      * This method tweets a given message.
      *
      * @param message a message you wish to Tweet out
      */
-    public void tweetOut(String message) throws TwitterException, IOException {
-
     }
 
 
-    /******************  Part III - Test *******************/
     /**
      * This method queries the tweets of a particular user's handle.
      *
@@ -64,7 +61,6 @@ class TJTwitter {
         statuses.clear();
         terms.clear();
         fetchTweets(handle);
-        splitIntoWords();
         removeCommonEnglishWords();
         sortAndRemoveEmpties();
         mostPopularWord();
@@ -76,8 +72,6 @@ class TJTwitter {
      *
      * @param handle the Twitter handle (username) without the @sign
      */
-    public void fetchTweets(String handle) throws TwitterException, IOException {
-        // Creates file for dedebugging purposes
         PrintStream fileout = new PrintStream(new FileOutputStream("tweets.txt"));
         Paging page = new Paging(1, 200);
         int p = 1;
@@ -93,20 +87,19 @@ class TJTwitter {
     /**
      * This method takes each status and splits them into individual words.
      * Store the word in terms.
+     *
+     * @param statuses The statuses.
      */
-    public void splitIntoWords() {
-
-
     }
 
     /**
      * This method removes common English words from the list of terms.
      * Remove all words found in commonWords.txt  from the argument list.
      * The count will not be given in commonWords.txt. You must count the number of words in this method.
-     * This method should NOT throw an excpetion.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
     public void removeCommonEnglishWords() {
+    private void removeCommonEnglishWords() {
 
 
     }
@@ -117,7 +110,6 @@ class TJTwitter {
      * Remove all empty strings while you are at it.
      */
     @SuppressWarnings("unchecked")
-    public void sortAndRemoveEmpties() {
 
 
     }
@@ -126,10 +118,9 @@ class TJTwitter {
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
-     * @post will popopulate the frequencyMax variable with the frequency of the most common word
+     * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public void mostPopularWord() {
 
 
     }

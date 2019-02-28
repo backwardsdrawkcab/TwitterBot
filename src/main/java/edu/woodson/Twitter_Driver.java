@@ -11,11 +11,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-public class Twitter_Driver {
-    private static PrintStream consolePrint;
+class Twitter_Driver {
 
     public static void main(String[] args) throws TwitterException, IOException {
-        consolePrint = System.out; // this preserves the standard output so we can get to it later
+        PrintStream consolePrint = System.out;
 
         // PART III - Connect
         // set classpath, edit properties file
@@ -27,18 +26,29 @@ public class Twitter_Driver {
                 .setOAuthAccessTokenSecret("pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY")
                 .build();
 
+<<<<<<< HEAD
         Twitter twitter = new TwitterFactory(builder).getInstance();
         TJTwitter bigBird = new TJTwitter(consolePrint, twitter);
+=======
+        TJTwitter bigBird = new TJTwitter();
+>>>>>>> pr/10
 
         // Part III - Tweet
         // Create and set a String called message below
-        // Uncomment this line to test, but then recomment so that the same
+        // Uncomment this line to test, but then re-comment so that the same
         // tweet does not get sent out over and over.
    
+<<<<<<< HEAD
 
 //      String message="Gooooooooo Colonials!";
 //      twitter.updateStatus(message);
 
+=======
+      /*
+      String message="Go Colonials!";
+      bigBird.tweetOut(message);
+      */
+>>>>>>> pr/10
 
 
         // PART III - Test
