@@ -49,7 +49,7 @@ class TJTwitterTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"I", "have", "a", "pen", "an", "apple"})
+    @ValueSource(strings = {"I", "have", "a", "pen,", "an", "apple!"})
     void splitIntoWords(String word) {
         TJTwitter tjTwitter = new TJTwitter();
         List<String> words = tjTwitter.splitIntoWords(Collections.singletonList("I have a pen, I have an apple!"));
