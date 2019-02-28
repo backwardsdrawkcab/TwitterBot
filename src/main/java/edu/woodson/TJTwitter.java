@@ -14,7 +14,7 @@ class TJTwitter {
     private List<Status> statuses;
     private int numberOfTweets;
     private List<String> words;
-    private String popularWord;
+    private String mostPopularWord;
     private int frequencyMax;
 
     public TJTwitter(Twitter twitter) {
@@ -34,7 +34,7 @@ class TJTwitter {
     }
 
     public String getMostPopularWord() {
-        return popularWord;
+        return mostPopularWord;
     }
 
     public int getFrequencyMax() {
@@ -66,7 +66,8 @@ class TJTwitter {
         words.addAll(splitIntoWords(toMessage(statuses)));
         removeCommonEnglishWords();
         sortAndRemoveEmpties();
-        mostPopularWord(words);
+
+        this.mostPopularWord = CollectionUtil.toSingle(mostPopularWord(words));
     }
 
     private List<String> toMessage(List<Status> statuses) {
