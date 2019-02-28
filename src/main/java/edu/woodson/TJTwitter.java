@@ -24,8 +24,8 @@ class TJTwitter {
         // Makes an instance of Twitter - this is re-usable and thread safe.
         // Connects to Twitter and performs authorizations.
         this.twitter = twitter;
-        statuses = new ArrayList<>();
-        terms = new ArrayList<>();
+        this.statuses = new ArrayList<>();
+        this.terms = new ArrayList<>();
     }
 
     public List<String> getTerms() {
@@ -50,7 +50,7 @@ class TJTwitter {
      *
      * @param message a message you wish to Tweet out
      */
-    public void tweetOut(String message) throws TwitterException, IOException {
+    public void tweetOut(String message) throws TwitterException {
         twitter.updateStatus(message);
     }
 
@@ -118,7 +118,7 @@ class TJTwitter {
      * This method removes common English words from the list of terms.
      * Remove all words found in commonWords.txt  from the argument list.
      * The count will not be given in commonWords.txt. You must count the number of words in this method.
-     * This method should NOT throw an excpetion.  Use try/catch.
+     * This method should NOT throw an exception.  Use try/catch.
      */
     @SuppressWarnings("unchecked")
     public void removeCommonEnglishWords() {
@@ -141,7 +141,7 @@ class TJTwitter {
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
      *
-     * @post will popopulate the frequencyMax variable with the frequency of the most common word
+     * @post will populate the frequencyMax variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
     public void mostPopularWord() {
