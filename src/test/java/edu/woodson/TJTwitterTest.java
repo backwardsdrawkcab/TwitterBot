@@ -46,8 +46,7 @@ class TJTwitterTest {
 
     @Test
     void removePunctuation() {
-        TJTwitter tjTwitter = new TJTwitter(Mockito.mock(Twitter.class));
-        assertEquals("shouldremovepunctuationbutnot'", tjTwitter.removePunctuation("?Should,Remove,Punctuation!ButNot'"));
+        assertEquals("shouldremovepunctuationbutnot'", twitter.removePunctuation("?Should,Remove,Punctuation!ButNot'"));
     }
 
     @Test
@@ -88,15 +87,13 @@ class TJTwitterTest {
 
     @Test
     void sortAndRemoveEmpties() {
-        TJTwitter tjTwitter = new TJTwitter(Mockito.mock(Twitter.class));
-
         List<String> input = new LinkedList<>();
         Collections.addAll(input, "hi", "", "I");
 
         List<String> expected = new LinkedList<>();
         Collections.addAll(expected, "I", "hi");
 
-        assertEquals(expected, tjTwitter.sortAndRemoveEmpties(input));
+        assertEquals(expected, twitter.sortAndRemoveEmpties(input));
     }
 
     @Test
