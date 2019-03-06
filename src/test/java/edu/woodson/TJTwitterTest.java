@@ -21,15 +21,52 @@ class TJTwitterTest {
     }
 
     @Test
-    void getTerms() {
+    void calculateMax() {
+        Map<String, Long> map = new HashMap<>();
+        map.put("test0", 1L);
+        map.put("test1", 2L);
+        map.put("test2", 3L);
+        Optional<Long> max = twitter.calculateMax(map);
+        assertTrue(max.isPresent());
+        assertEquals(3L, (long) max.get());
     }
 
     @Test
-    void getNumberOfTweets() {
+    void calculateMax1() {
     }
 
     @Test
-    void getMostPopularWord() {
+    void calculateMax2() {
+    }
+
+    @Test
+    void calculateMaxFrequency() {
+    }
+
+    @Test
+    void createFrequencyMap() {
+        Map<String, Long> map = twitter.createFrequencyMap(Arrays.asList("test0", "test1", "test1"));
+        assertEquals(2, map.size());
+        assertTrue(map.containsKey("test0"));
+        assertTrue(map.containsKey("test1"));
+        assertEquals(1L, (long) map.get("test0"));
+        assertEquals(2L, (long) map.get("test1"));
+    }
+
+    @Test
+    void createFrequencyMap1() {
+    }
+
+    @Test
+    void fetchTweets() {
+    }
+
+    @Test
+    void fetchTweets1() {
+    }
+
+    @Test
+    void getCommonWordsURL() {
     }
 
     @Test
@@ -37,17 +74,27 @@ class TJTwitterTest {
     }
 
     @Test
-    void tweetOut() {
+    void getMaxFrequency() {
     }
 
     @Test
-    void queryHandle() {
+    void getMostPopularWord() {
     }
 
     @Test
-    void removePunctuation() {
-        TJTwitter tjTwitter = new TJTwitter(Mockito.mock(Twitter.class));
-        assertEquals("shouldremovepunctuationbutnot'", tjTwitter.removePunctuation("?Should,Remove,Punctuation!ButNot'"));
+    void getMostPopularWord1() {
+    }
+
+    @Test
+    void getNumberOfTweets() {
+    }
+
+    @Test
+    void getTerms() {
+    }
+
+    @Test
+    void getWords() {
     }
 
     @Test
@@ -55,15 +102,11 @@ class TJTwitterTest {
     }
 
     @Test
-    void sampleInvestigate() {
+    void loadCommonWordsFromLocation() {
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"I", "have", "a", "pen,", "an", "apple!"})
-    void splitIntoWords(String word) {
-        List<String> words = twitter.splitIntoWords(Collections.singletonList("I have a pen, I have an apple!"));
-        assertEquals(8, words.size());
-        assertTrue(words.contains(word));
+    @Test
+    void loadCommonWordsFromStream() {
     }
 
     @Test
@@ -75,15 +118,41 @@ class TJTwitterTest {
     }
 
     @Test
-    void getWords() {
+    void mostPopularWord1() {
     }
 
     @Test
-    void fetchTweets() {
+    void mostPopularWordToSingle() {
+    }
+
+    @Test
+    void queryHandle() {
+    }
+
+    @Test
+    void queryHandle1() {
     }
 
     @Test
     void removeCommonEnglishWords() {
+    }
+
+    @Test
+    void removeEmptyStrings() {
+    }
+
+    @Test
+    void removePunctuation() {
+        TJTwitter tjTwitter = new TJTwitter(Mockito.mock(Twitter.class));
+        assertEquals("shouldremovepunctuationbutnot'", tjTwitter.removePunctuation("?Should,Remove,Punctuation!ButNot'"));
+    }
+
+    @Test
+    void removePunctuation1() {
+    }
+
+    @Test
+    void sampleInvestigate() {
     }
 
     @Test
@@ -100,23 +169,30 @@ class TJTwitterTest {
     }
 
     @Test
-    void calculateMax() {
-        Map<String, Long> map = new HashMap<>();
-        map.put("test0", 1L);
-        map.put("test1", 2L);
-        map.put("test2", 3L);
-        Optional<Long> max = twitter.calculateMax(map);
-        assertTrue(max.isPresent());
-        assertEquals(3L, (long) max.get());
+    void sortAndRemoveEmpties1() {
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"I", "have", "a", "pen,", "an", "apple!"})
+    void splitIntoWords(String word) {
+        List<String> words = twitter.splitIntoWords(Collections.singletonList("I have a pen, I have an apple!"));
+        assertEquals(8, words.size());
+        assertTrue(words.contains(word));
     }
 
     @Test
-    void createFrequencyMap() {
-        Map<String, Long> map = twitter.createFrequencyMap(Arrays.asList("test0", "test1", "test1"));
-        assertEquals(2, map.size());
-        assertTrue(map.containsKey("test0"));
-        assertTrue(map.containsKey("test1"));
-        assertEquals(1L, (long) map.get("test0"));
-        assertEquals(2L, (long) map.get("test1"));
+    void splitIntoWords1() {
+    }
+
+    @Test
+    void toMessage() {
+    }
+
+    @Test
+    void tweetOut() {
+    }
+
+    @Test
+    void tweetOut1() {
     }
 }

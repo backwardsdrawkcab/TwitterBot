@@ -25,15 +25,23 @@ class TJTwitter {
         this.twitter = twitter;
     }
 
+    public int getMaxFrequency() {
+        return calculateMaxFrequency();
+    }
+
+    int calculateMaxFrequency() {
+        return Math.toIntExact(calculateMax(createFrequencyMap(words)).orElseThrow());
+    }
+
+    /******************  Part III - Tweet *******************/
+
     public String getMostPopularWord() {
         return mostPopularWordToSingle();
     }
 
-    private String mostPopularWordToSingle() {
+    String mostPopularWordToSingle() {
         return CollectionUtil.toSingle(mostPopularWord(words));
     }
-
-    /******************  Part III - Tweet *******************/
 
     /**
      * This method calculates the word that appears the most times
@@ -66,7 +74,7 @@ class TJTwitter {
                 .count(), Long::max));
     }
 
-    private long calculateMax(List<String> words, Map<String, Long> map) {
+    long calculateMax(List<String> words, Map<String, Long> map) {
         Optional<Long> maxOptional = calculateMax(map);
         if (!maxOptional.isPresent()) {
             throw new IllegalArgumentException("No maximum found for " + words);
@@ -79,21 +87,10 @@ class TJTwitter {
         return map.values().stream().max(Long::compareTo);
     }
 
-    public int getMaxFrequency() {
-        return calculateMaxFrequency();
-    }
-
-    private int calculateMaxFrequency() {
-        return Math.toIntExact(calculateMax(createFrequencyMap(words)).orElseThrow());
-    }
-
-    /**
-     * This method tweets a given message.
-     *
-     * @param message a message you wish to Tweet out
-     */
-    public void tweetOut(String message) throws TwitterException {
-        twitter.updateStatus(message);
+    /******************  Part IV *******************/
+    public void investigate() {
+        //Enter your code here
+        //TODO: put some code here
     }
 
     /**
@@ -111,36 +108,6 @@ class TJTwitter {
 
         this.words.removeAll(loadCommonWordsFromLocation());
         this.words.addAll(sortAndRemoveEmpties(words));
-    }
-
-    private List<String> loadCommonWordsFromLocation() throws IOException {
-        Optional<URL> commonWordsURL = getCommonWordsURL(COMMON_WORDS_LOCATION);
-        if (!commonWordsURL.isPresent()) {
-            throw new IllegalArgumentException("Could not find common words " + COMMON_WORDS_LOCATION);
-        }
-
-        return loadCommonWordsFromStream(commonWordsURL.get().openStream());
-    }
-
-    private List<String> loadCommonWordsFromStream(InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        reader.close();
-        return reader.lines()
-                .map(String::trim)
-                .map(s -> s.split(" "))
-                .filter(strings -> strings.length == 1)
-                .map(strings -> strings[0])
-                .collect(Collectors.toList());
-    }
-
-    private Optional<URL> getCommonWordsURL(String name) {
-        return Optional.ofNullable(getClass().getResource(name));
-    }
-
-    private List<String> toMessage(List<Status> statuses) {
-        return statuses.stream()
-                .map(Status::getText)
-                .collect(Collectors.toList());
     }
 
     /**
@@ -182,6 +149,21 @@ class TJTwitter {
 
     }
 
+    List<String> toMessage(List<Status> statuses) {
+        return statuses.stream()
+                .map(Status::getText)
+                .collect(Collectors.toList());
+    }
+
+    List<String> loadCommonWordsFromLocation() throws IOException {
+        Optional<URL> commonWordsURL = getCommonWordsURL(COMMON_WORDS_LOCATION);
+        if (!commonWordsURL.isPresent()) {
+            throw new IllegalArgumentException("Could not find common words " + COMMON_WORDS_LOCATION);
+        }
+
+        return loadCommonWordsFromStream(commonWordsURL.get().openStream());
+    }
+
     /**
      * This method sorts the words in words in alphabetically (and lexicographic) order.
      * You should use your sorting code you wrote earlier this year.
@@ -195,7 +177,22 @@ class TJTwitter {
         return terms;
     }
 
-    private List<String> removeEmptyStrings(List<String> terms) {
+    Optional<URL> getCommonWordsURL(String name) {
+        return Optional.ofNullable(getClass().getResource(name));
+    }
+
+    List<String> loadCommonWordsFromStream(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        reader.close();
+        return reader.lines()
+                .map(String::trim)
+                .map(s -> s.split(" "))
+                .filter(strings -> strings.length == 1)
+                .map(strings -> strings[0])
+                .collect(Collectors.toList());
+    }
+
+    List<String> removeEmptyStrings(List<String> terms) {
         return terms.stream()
                 .map(String::trim)
                 .filter(s -> s.length() != 0)
@@ -213,12 +210,6 @@ class TJTwitter {
      */
     public String removePunctuation(String s) {
         return s.replaceAll("[^a-z'A-Z]", "").toLowerCase();
-    }
-
-    /******************  Part IV *******************/
-    public void investigate() {
-        //Enter your code here
-        //TODO: put some code here
     }
 
     /**
@@ -240,5 +231,14 @@ class TJTwitter {
             e.printStackTrace();
         }
         System.out.println();
+    }
+
+    /**
+     * This method tweets a given message.
+     *
+     * @param message a message you wish to Tweet out
+     */
+    public void tweetOut(String message) throws TwitterException {
+        twitter.updateStatus(message);
     }
 }
