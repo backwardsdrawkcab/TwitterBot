@@ -1,5 +1,6 @@
 package edu.woodson;
 
+import edu.woodson.util.CollectionUtil;
 import twitter4j.Status;
 
 import java.util.*;

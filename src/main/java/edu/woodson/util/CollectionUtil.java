@@ -1,4 +1,4 @@
-package edu.woodson;
+package edu.woodson.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
