@@ -11,7 +11,7 @@ public abstract class RandomSupplier<T> implements Supplier<T> {
                 .mapToObj(value -> get())
                 .collect(Collectors.toList());
     }
-    private int createRandomNumber(int from, int to) {
+    int createRandomNumber(int from, int to) {
         return (int) (Math.random() * (from - to) + to);
     }
 }
