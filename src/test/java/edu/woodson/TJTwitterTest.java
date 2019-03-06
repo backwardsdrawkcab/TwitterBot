@@ -12,4 +12,5 @@ class TJTwitterTest {
         twitter = new TJTwitter(Mockito.mock(Twitter.class));
     }
 
+
 }
