@@ -2,84 +2,38 @@ package edu.woodson;
 
 import twitter4j.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 class TJTwitter {
     private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
-    private Twitter twitter;
-    private List<Status> statuses;
-    private int numberOfTweets;
-    private List<String> words;
-    private String mostPopularWord;
-    private int maxFrequency;
+    private final List<Status> statuses = new ArrayList<>();
+    private final List<String> words = new ArrayList<>();
+    private final Twitter twitter;
 
     public TJTwitter(Twitter twitter) {
-        // Makes an instance of Twitter - this is re-usable and thread safe.
-        // Connects to Twitter and performs authorizations.
         this.twitter = twitter;
-        this.statuses = new ArrayList<>();
-        this.words = new ArrayList<>();
-    }
-
-    public List<String> getWords() {
-        return words;
-    }
-
-    public int getNumberOfTweets() {
-        return numberOfTweets;
     }
 
     public String getMostPopularWord() {
-        return mostPopularWord;
-    }
-
-    public int getMaxFrequency() {
-        return maxFrequency;
-    }
-
-    /******************  Part III - Tweet *******************/
-    /**
-     * This method tweets a given message.
-     *
-     * @param message a message you wish to Tweet out
-     */
-    public void tweetOut(String message) throws TwitterException {
-        twitter.updateStatus(message);
-    }
-
-
-    /******************  Part III - Test *******************/
-    /**
-     * This method queries the tweets of a particular user's handle.
-     *
-     * @param handle the Twitter handle (username) without the @sign
-     */
-    @SuppressWarnings("unchecked")
-    public void queryHandle(String handle) throws TwitterException, IOException {
-        statuses.clear();
-        words.clear();
-        fetchTweets(handle);
-        words.addAll(splitIntoWords(toMessage(statuses)));
-
-        this.words.removeAll(loadCommonWordsFromLocation());
-        this.words.addAll(sortAndRemoveEmpties(words));
-
-        this.maxFrequency = calculateMaxFrequency();
-        this.mostPopularWord = mostPopularWordToSingle();
-    }
-
-    private int calculateMaxFrequency() {
-        return Math.toIntExact(calculateMax(createFrequencyMap(words)).orElseThrow());
+        return mostPopularWordToSingle();
     }
 
     private String mostPopularWordToSingle() {
         return CollectionUtil.toSingle(mostPopularWord(words));
     }
+
+    /******************  Part III - Tweet *******************/
 
     /**
      * This method calculates the word that appears the most times
@@ -104,6 +58,14 @@ class TJTwitter {
                 .collect(Collectors.toSet());
     }
 
+    /******************  Part III - Test *******************/
+
+    Map<String, Long> createFrequencyMap(List<String> words) {
+        return words.stream().collect(Collectors.toMap(Function.identity(), string -> words.stream()
+                .filter(s -> s.equals(string))
+                .count(), Long::max));
+    }
+
     private long calculateMax(List<String> words, Map<String, Long> map) {
         Optional<Long> maxOptional = calculateMax(map);
         if (!maxOptional.isPresent()) {
@@ -111,6 +73,44 @@ class TJTwitter {
         }
 
         return maxOptional.get();
+    }
+
+    Optional<Long> calculateMax(Map<String, Long> map) {
+        return map.values().stream().max(Long::compareTo);
+    }
+
+    public int getMaxFrequency() {
+        return calculateMaxFrequency();
+    }
+
+    private int calculateMaxFrequency() {
+        return Math.toIntExact(calculateMax(createFrequencyMap(words)).orElseThrow());
+    }
+
+    /**
+     * This method tweets a given message.
+     *
+     * @param message a message you wish to Tweet out
+     */
+    public void tweetOut(String message) throws TwitterException {
+        twitter.updateStatus(message);
+    }
+
+    /**
+     * This method queries the tweets of a particular user's handle.
+     *
+     * @param handle the Twitter handle (username) without the @sign
+     */
+    @SuppressWarnings("unchecked")
+    public void queryHandle(String handle) throws IOException {
+        statuses.clear();
+        statuses.addAll(fetchTweets(handle));
+
+        words.clear();
+        words.addAll(splitIntoWords(toMessage(statuses)));
+
+        this.words.removeAll(loadCommonWordsFromLocation());
+        this.words.addAll(sortAndRemoveEmpties(words));
     }
 
     private List<String> loadCommonWordsFromLocation() throws IOException {
@@ -149,18 +149,21 @@ class TJTwitter {
      *
      * @param handle the Twitter handle (username) without the @sign
      */
-    public void fetchTweets(String handle) throws TwitterException, IOException {
-        // Creates file for debugging purposes
-        PrintStream fileout = new PrintStream(new FileOutputStream("tweets.txt"));
-        Paging page = new Paging(1, 200);
-        int p = 1;
-        while (p <= 10) {
-            page.setPage(p);
-            statuses.addAll(twitter.getUserTimeline(handle, page));
-            p++;
-        }
-        numberOfTweets = statuses.size();
-        fileout.println("Number of tweets = " + numberOfTweets);
+    public List<Status> fetchTweets(String handle) {
+        Paging paging = new Paging(1, 200);
+        return IntStream.range(1, 11)
+                .peek(paging::setPage)
+                .mapToObj((IntFunction<Optional<ResponseList<Status>>>) value -> {
+                    try {
+                        return Optional.of(twitter.getUserTimeline(handle, paging));
+                    } catch (TwitterException e) {
+                        e.printStackTrace();
+                        return Optional.empty();
+                    }
+                })
+                .flatMap(Optional::stream)
+                .flatMap((Function<ResponseList<Status>, Stream<Status>>) Collection::stream)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -193,28 +196,10 @@ class TJTwitter {
     }
 
     private List<String> removeEmptyStrings(List<String> terms) {
-        for (String s : terms) {
-            if (s.trim().equals(""))
-                terms.remove(s);
-        }
-        return terms;
-    }
-
-    Optional<Long> calculateMax(Map<String, Long> map) {
-        return map.values().stream().max(Long::compareTo);
-    }
-
-    Map<String, Long> createFrequencyMap(List<String> words) {
-        return words.stream().collect(Collectors.toMap(Function.identity(), string -> words.stream()
-                .filter(s -> s.equals(string))
-                .count(), Long::max));
-
-  /*      return words.stream().collect(Collectors.toMap(
-                s -> s,
-                string ->
-                ),
-                new BinaryOperator<Long>();
-        );*/
+        return terms.stream()
+                .map(String::trim)
+                .filter(s -> s.length() != 0)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -233,6 +218,7 @@ class TJTwitter {
     /******************  Part IV *******************/
     public void investigate() {
         //Enter your code here
+        //TODO: put some code here
     }
 
     /**
