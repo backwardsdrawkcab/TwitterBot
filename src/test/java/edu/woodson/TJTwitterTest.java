@@ -144,6 +144,7 @@ class TJTwitterTest {
     @Test
     void removePunctuation() {
         TJTwitter tjTwitter = new TJTwitter(Mockito.mock(Twitter.class));
+        //noinspection SpellCheckingInspection
         assertEquals("shouldremovepunctuationbutnot'", tjTwitter.removePunctuation("?Should,Remove,Punctuation!ButNot'"));
     }
 

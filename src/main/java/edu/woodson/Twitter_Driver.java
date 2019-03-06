@@ -2,7 +2,6 @@ package edu.woodson;// Name:
 // Date:
 
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
@@ -12,13 +11,12 @@ import java.io.PrintStream;
 import java.util.Scanner;
 
 public class Twitter_Driver {
-    private static PrintStream consolePrint;
-
-    public static void main(String[] args) throws TwitterException, IOException {
-        consolePrint = System.out; // this preserves the standard output so we can get to it later
+    public static void main(String[] args) throws IOException {
+        PrintStream consolePrint = System.out;
 
         // PART III - Connect
         // set classpath, edit properties file
+        @SuppressWarnings("SpellCheckingInspection")
         Configuration builder = new ConfigurationBuilder()
                 .setDebugEnabled(true)
                 .setOAuthConsumerKey("egk7giRtajHZYXBbKAjzSVhWb")
@@ -32,10 +30,10 @@ public class Twitter_Driver {
 
         // Part III - Tweet
         // Create and set a String called message below
-        // Uncomment this line to test, but then recomment so that the same
+        // Uncomment this line to test, but then re-comment so that the same
         // tweet does not get sent out over and over.
 
-//      String message="Gooooooooo Colonials!";
+//      String message="Go Colonials!";
 //      twitter.updateStatus(message);
   
       /*

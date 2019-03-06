@@ -156,7 +156,7 @@ class TJTwitter {
     }
 
     List<String> loadCommonWordsFromLocation() throws IOException {
-        Optional<URL> commonWordsURL = getCommonWordsURL(COMMON_WORDS_LOCATION);
+        Optional<URL> commonWordsURL = getCommonWordsURL();
         if (!commonWordsURL.isPresent()) {
             throw new IllegalArgumentException("Could not find common words " + COMMON_WORDS_LOCATION);
         }
@@ -169,16 +169,16 @@ class TJTwitter {
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
      *
-     * @param terms
+     * @param words The words.
      */
     @SuppressWarnings("unchecked")
-    public List<String> sortAndRemoveEmpties(List<String> terms) {
-        Collections.sort(removeEmptyStrings(terms));
-        return terms;
+    public List<String> sortAndRemoveEmpties(List<String> words) {
+        Collections.sort(removeEmptyStrings(words));
+        return words;
     }
 
-    Optional<URL> getCommonWordsURL(String name) {
-        return Optional.ofNullable(getClass().getResource(name));
+    Optional<URL> getCommonWordsURL() {
+        return Optional.ofNullable(getClass().getResource(TJTwitter.COMMON_WORDS_LOCATION));
     }
 
     List<String> loadCommonWordsFromStream(InputStream inputStream) throws IOException {
