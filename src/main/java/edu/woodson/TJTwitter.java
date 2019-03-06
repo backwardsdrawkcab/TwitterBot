@@ -2,9 +2,8 @@ package edu.woodson;
 
 import twitter4j.*;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,6 +16,7 @@ class TJTwitter {
     private List<String> words;
     private String mostPopularWord;
     private int frequencyMax;
+    private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
 
     public TJTwitter(Twitter twitter) {
         // Makes an instance of Twitter - this is re-usable and thread safe.
@@ -65,9 +65,31 @@ class TJTwitter {
         words.clear();
         fetchTweets(handle);
         words.addAll(splitIntoWords(toMessage(statuses)));
-        removeCommonEnglishWords();
+
+        List<String> commonWords = loadCommonWordsFromLocation();
+        words = removeCommonEnglishWords(words, commonWords);
         words.addAll(sortAndRemoveEmpties(words));
         this.mostPopularWord = CollectionUtil.toSingle(mostPopularWord(words));
+    }
+
+    private List<String> loadCommonWordsFromLocation() throws IOException {
+        Optional<URL> commonWordsURL = getCommonWordsURL(COMMON_WORDS_LOCATION);
+        if (!commonWordsURL.isPresent()) {
+            throw new IllegalArgumentException("Could not find common words " + COMMON_WORDS_LOCATION);
+        }
+
+        return loadCommonWordsFromStream(commonWordsURL.get().openStream());
+    }
+
+    private List<String> loadCommonWordsFromStream(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        reader.close();
+        return reader.lines()
+                .map(String::trim)
+                .map(s -> s.split(" "))
+                .filter(strings -> strings.length == 1)
+                .map(strings -> strings[0])
+                .collect(Collectors.toList());
     }
 
     private List<String> toMessage(List<Status> statuses) {
@@ -117,17 +139,23 @@ class TJTwitter {
      * Remove all words found in commonWords.txt  from the argument list.
      * The count will not be given in commonWords.txt. You must count the number of words in this method.
      * This method should NOT throw an exception.  Use try/catch.
-     */
+     *  @param words
+     * @param commonWords */
     @SuppressWarnings("unchecked")
-    public void removeCommonEnglishWords() {
+    public List<String> removeCommonEnglishWords(List<String> words, List<String> commonWords) {
+        words.removeAll(commonWords);
+        return words;
+    }
 
-
+    private Optional<URL> getCommonWordsURL(String name) {
+        return Optional.ofNullable(getClass().getResource(name));
     }
 
     /**
      * This method sorts the words in words in alphabetically (and lexicographic) order.
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
+     *
      * @param terms
      */
     @SuppressWarnings("unchecked")
@@ -147,8 +175,9 @@ class TJTwitter {
     /**
      * This method calculates the word that appears the most times
      * Consider case - should it be case sensitive?  The choice is yours.
-     *
+     * <p>
      * post will populate the frequencyMax variable with the frequency of the most common word
+     *
      * @param words The words to search.
      * @post will populate the frequencyMax variable with the frequency of the most common word
      */
