@@ -26,20 +26,24 @@ class TJTwitter {
     }
 
     public int getMaxFrequency() {
-        return calculateMaxFrequency();
+        return Math.toIntExact(calculateMax(createFrequencyMap(words)).orElseThrow());
     }
 
-    int calculateMaxFrequency() {
-        return Math.toIntExact(calculateMax(createFrequencyMap(words)).orElseThrow());
+    Optional<Long> calculateMax(Map<String, Long> map) {
+        return map.values().stream().max(Long::compareTo);
+    }
+
+    /******************  Part III - Test *******************/
+
+    Map<String, Long> createFrequencyMap(List<String> words) {
+        return words.stream().collect(Collectors.toMap(Function.identity(), string -> words.stream()
+                .filter(s -> s.equals(string))
+                .count(), Long::max));
     }
 
     /******************  Part III - Tweet *******************/
 
     public String getMostPopularWord() {
-        return mostPopularWordToSingle();
-    }
-
-    String mostPopularWordToSingle() {
         return CollectionUtil.toSingle(mostPopularWord(words));
     }
 
@@ -66,14 +70,6 @@ class TJTwitter {
                 .collect(Collectors.toSet());
     }
 
-    /******************  Part III - Test *******************/
-
-    Map<String, Long> createFrequencyMap(List<String> words) {
-        return words.stream().collect(Collectors.toMap(Function.identity(), string -> words.stream()
-                .filter(s -> s.equals(string))
-                .count(), Long::max));
-    }
-
     long calculateMax(List<String> words, Map<String, Long> map) {
         Optional<Long> maxOptional = calculateMax(map);
         if (!maxOptional.isPresent()) {
@@ -81,10 +77,6 @@ class TJTwitter {
         }
 
         return maxOptional.get();
-    }
-
-    Optional<Long> calculateMax(Map<String, Long> map) {
-        return map.values().stream().max(Long::compareTo);
     }
 
     /******************  Part IV *******************/
