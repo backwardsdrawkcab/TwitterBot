@@ -54,7 +54,7 @@ public class Twitter_Driver {
         while (!twitter_handle.equals("done")) {
             bigBird.queryHandle(twitter_handle);
             consolePrint.println("The most common word from @" + twitter_handle + " is: " + bigBird.getMostPopularWord() + ".");
-            consolePrint.println("The word appears " + bigBird.getFrequencyMax() + " times.");
+            consolePrint.println("The word appears " + bigBird.getMaxFrequency() + " times.");
             consolePrint.println();
             consolePrint.print("Please enter a Twitter handle, do not include the @ symbol --> ");
             twitter_handle = scan.next();

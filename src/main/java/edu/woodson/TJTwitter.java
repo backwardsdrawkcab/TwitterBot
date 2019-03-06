@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 class TJTwitter {
+    private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
     private Twitter twitter;
     private List<Status> statuses;
     private int numberOfTweets;
     private List<String> words;
     private String mostPopularWord;
-    private int frequencyMax;
-    private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
+    private int maxFrequency;
 
     public TJTwitter(Twitter twitter) {
         // Makes an instance of Twitter - this is re-usable and thread safe.
@@ -38,8 +38,8 @@ class TJTwitter {
         return mostPopularWord;
     }
 
-    public int getFrequencyMax() {
-        return frequencyMax;
+    public int getMaxFrequency() {
+        return maxFrequency;
     }
 
     /******************  Part III - Tweet *******************/
@@ -66,10 +66,51 @@ class TJTwitter {
         fetchTweets(handle);
         words.addAll(splitIntoWords(toMessage(statuses)));
 
-        List<String> commonWords = loadCommonWordsFromLocation();
-        words = removeCommonEnglishWords(words, commonWords);
-        words.addAll(sortAndRemoveEmpties(words));
-        this.mostPopularWord = CollectionUtil.toSingle(mostPopularWord(words));
+        this.words.removeAll(loadCommonWordsFromLocation());
+        this.words.addAll(sortAndRemoveEmpties(words));
+
+        this.maxFrequency = calculateMaxFrequency();
+        this.mostPopularWord = mostPopularWordToSingle();
+    }
+
+    private int calculateMaxFrequency() {
+        return Math.toIntExact(calculateMax(createFrequencyMap(words)).orElseThrow());
+    }
+
+    private String mostPopularWordToSingle() {
+        return CollectionUtil.toSingle(mostPopularWord(words));
+    }
+
+    /**
+     * This method calculates the word that appears the most times
+     * Consider case - should it be case sensitive?  The choice is yours.
+     * <p>
+     * post will populate the maxFrequency variable with the frequency of the most common word
+     *
+     * @param words The words to search.
+     * @post will populate the maxFrequency variable with the frequency of the most common word
+     */
+    @SuppressWarnings("unchecked")
+    public Set<String> mostPopularWord(List<String> words) {
+        if (words.isEmpty()) {
+            throw new IllegalArgumentException("No words found for " + words);
+        }
+
+        Map<String, Long> map = createFrequencyMap(words);
+        long max = calculateMax(words, map);
+        return map.keySet()
+                .stream()
+                .filter(s -> map.get(s).equals(max))
+                .collect(Collectors.toSet());
+    }
+
+    private long calculateMax(List<String> words, Map<String, Long> map) {
+        Optional<Long> maxOptional = calculateMax(map);
+        if (!maxOptional.isPresent()) {
+            throw new IllegalArgumentException("No maximum found for " + words);
+        }
+
+        return maxOptional.get();
     }
 
     private List<String> loadCommonWordsFromLocation() throws IOException {
@@ -90,6 +131,10 @@ class TJTwitter {
                 .filter(strings -> strings.length == 1)
                 .map(strings -> strings[0])
                 .collect(Collectors.toList());
+    }
+
+    private Optional<URL> getCommonWordsURL(String name) {
+        return Optional.ofNullable(getClass().getResource(name));
     }
 
     private List<String> toMessage(List<Status> statuses) {
@@ -135,23 +180,6 @@ class TJTwitter {
     }
 
     /**
-     * This method removes common English words from the list of words.
-     * Remove all words found in commonWords.txt  from the argument list.
-     * The count will not be given in commonWords.txt. You must count the number of words in this method.
-     * This method should NOT throw an exception.  Use try/catch.
-     *  @param words
-     * @param commonWords */
-    @SuppressWarnings("unchecked")
-    public List<String> removeCommonEnglishWords(List<String> words, List<String> commonWords) {
-        words.removeAll(commonWords);
-        return words;
-    }
-
-    private Optional<URL> getCommonWordsURL(String name) {
-        return Optional.ofNullable(getClass().getResource(name));
-    }
-
-    /**
      * This method sorts the words in words in alphabetically (and lexicographic) order.
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
@@ -170,34 +198,6 @@ class TJTwitter {
                 terms.remove(s);
         }
         return terms;
-    }
-
-    /**
-     * This method calculates the word that appears the most times
-     * Consider case - should it be case sensitive?  The choice is yours.
-     * <p>
-     * post will populate the frequencyMax variable with the frequency of the most common word
-     *
-     * @param words The words to search.
-     * @post will populate the frequencyMax variable with the frequency of the most common word
-     */
-    @SuppressWarnings("unchecked")
-    public Set<String> mostPopularWord(List<String> words) {
-        if (words.isEmpty()) {
-            throw new IllegalArgumentException("No words found for " + words);
-        }
-
-        Map<String, Long> map = createFrequencyMap(words);
-        Optional<Long> maxOptional = calculateMax(map);
-        if (!maxOptional.isPresent()) {
-            throw new IllegalArgumentException("No maximum found for " + words);
-        }
-
-        long max = maxOptional.get();
-        return map.keySet()
-                .stream()
-                .filter(s -> map.get(s).equals(max))
-                .collect(Collectors.toSet());
     }
 
     Optional<Long> calculateMax(Map<String, Long> map) {
