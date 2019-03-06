@@ -7,6 +7,7 @@ scalaVersion := "2.12.8"
 
 libraryDependencies += "org.twitter4j" % "twitter4j-core" % "4.0.+"
 libraryDependencies += "org.apache.httpcomponents" % "fluent-hc" % "4.5.+"
+libraryDependencies += "com.taskadapter" % "trello-java-wrapper" % "0.+"
 
 
 libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test
