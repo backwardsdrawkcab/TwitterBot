@@ -1,32 +1,17 @@
 package edu.woodson.app;
 
 public class Main {
-    public static void main(String[] args) {
-        Main main = new Main();
-        main.start();
+    private static final TwitterBot twitterBot = new TwitterBot();
 
-        while(main.isRunning()){
-            main.loop();
+    public static void main(String[] args) {
+        twitterBot.start();
+
+        while(twitterBot.isRunning()){
+            twitterBot.loop();
         }
 
-        main.stop();
+        twitterBot.stop();
 
         System.exit(0);
-    }
-
-    public void start(){
-
-    }
-
-    public boolean isRunning(){
-        return false;
-    }
-
-    public void loop(){
-
-    }
-
-    public void stop(){
-
     }
 }
