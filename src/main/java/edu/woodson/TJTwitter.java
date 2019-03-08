@@ -1,5 +1,9 @@
 package edu.woodson;
 
+import com.julienvey.trello.Trello;
+import com.julienvey.trello.domain.TList;
+import com.julienvey.trello.impl.TrelloImpl;
+import com.julienvey.trello.impl.http.ApacheHttpClient;
 import twitter4j.*;
 
 import java.io.BufferedReader;
