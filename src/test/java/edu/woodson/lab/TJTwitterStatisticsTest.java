@@ -1,5 +1,6 @@
-package edu.woodson;
+package edu.woodson.lab;
 
+import edu.woodson.lab.TJTwitterStatistics;
 import edu.woodson.util.RandomSupplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

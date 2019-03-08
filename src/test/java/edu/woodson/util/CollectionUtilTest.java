@@ -1,4 +1,4 @@
-package edu.woodson;
+package edu.woodson.util;
 
 import edu.woodson.util.CollectionUtil;
 import org.junit.jupiter.api.Test;

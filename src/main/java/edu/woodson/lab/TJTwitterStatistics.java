@@ -1,4 +1,4 @@
-package edu.woodson;
+package edu.woodson.lab;
 
 import edu.woodson.util.CollectionUtil;
 import twitter4j.Status;

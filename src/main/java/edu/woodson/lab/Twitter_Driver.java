@@ -1,4 +1,4 @@
-package edu.woodson;// Name:
+package edu.woodson.lab;// Name:
 // Date:
 
 import twitter4j.Twitter;

@@ -1,4 +1,4 @@
-package edu.woodson;
+package edu.woodson.lab;
 
 import com.julienvey.trello.Trello;
 import com.julienvey.trello.domain.Board;
