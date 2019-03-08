@@ -6,78 +6,57 @@ import com.julienvey.trello.impl.TrelloImpl;
 import com.julienvey.trello.impl.http.ApacheHttpClient;
 import twitter4j.*;
 
-import java.io.FileOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 class TJTwitter {
-    private Twitter twitter;
-    private List<Status> statuses;
-    private int numberOfTweets;
-    private List<String> words;
-    private String mostPopularWord;
-    private int frequencyMax;
+    private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
+    private final TJTwitterStatistics statistics = new TJTwitterStatistics();
+    private final Twitter twitter;
 
     public TJTwitter(Twitter twitter) {
-        // Makes an instance of Twitter - this is re-usable and thread safe.
-        // Connects to Twitter and performs authorizations.
         this.twitter = twitter;
-        this.statuses = new ArrayList<>();
-        this.words = new ArrayList<>();
     }
 
-    public List<String> getWords() {
-        return words;
-    }
-
-    public int getNumberOfTweets() {
-        return numberOfTweets;
-    }
-
-    public String getMostPopularWord() {
-        return mostPopularWord;
-    }
-
-    public int getFrequencyMax() {
-        return frequencyMax;
+    public int getMaxFrequency() {
+        return statistics.getMaxFrequency();
     }
 
     /******************  Part III - Tweet *******************/
-    /**
-     * This method tweets a given message.
-     *
-     * @param message a message you wish to Tweet out
-     */
-    public void tweetOut(String message) throws TwitterException {
-        twitter.updateStatus(message);
+
+    public String getMostPopularWord() {
+        return statistics.getMostPopularWord();
     }
 
+    /******************  Part IV *******************/
+    public void investigate() {
+        //Enter your code here
+        //TODO: put some code here
+    }
 
-    /******************  Part III - Test *******************/
     /**
      * This method queries the tweets of a particular user's handle.
      *
      * @param handle the Twitter handle (username) without the @sign
      */
     @SuppressWarnings("unchecked")
-    public void queryHandle(String handle) throws TwitterException, IOException {
-        statuses.clear();
-        words.clear();
-        fetchTweets(handle);
-        words.addAll(splitIntoWords(toMessage(statuses)));
-        removeCommonEnglishWords();
-        words.addAll(sortAndRemoveEmpties(words));
-        this.mostPopularWord = CollectionUtil.toSingle(mostPopularWord(words));
-    }
+    public void queryHandle(String handle) throws IOException {
+        List<Status> statuses = fetchTweets(handle);
+        List<String> words = splitIntoWords(toMessage(statistics.getStatuses()));
+        statistics.setValues(statuses, words);
 
-    private List<String> toMessage(List<Status> statuses) {
-        return statuses.stream()
-                .map(Status::getText)
-                .collect(Collectors.toList());
+        statistics.removeCommonWords(loadCommonWordsFromLocation());
+        statistics.sortAndRemoveEntries();
     }
 
     /**
@@ -86,18 +65,21 @@ class TJTwitter {
      *
      * @param handle the Twitter handle (username) without the @sign
      */
-    public void fetchTweets(String handle) throws TwitterException, IOException {
-        // Creates file for debugging purposes
-        PrintStream fileout = new PrintStream(new FileOutputStream("tweets.txt"));
-        Paging page = new Paging(1, 200);
-        int p = 1;
-        while (p <= 10) {
-            page.setPage(p);
-            statuses.addAll(twitter.getUserTimeline(handle, page));
-            p++;
-        }
-        numberOfTweets = statuses.size();
-        fileout.println("Number of tweets = " + numberOfTweets);
+    public List<Status> fetchTweets(String handle) {
+        Paging paging = new Paging(1, 200);
+        return IntStream.range(1, 11)
+                .peek(paging::setPage)
+                .mapToObj((IntFunction<Optional<ResponseList<Status>>>) value -> {
+                    try {
+                        return Optional.of(twitter.getUserTimeline(handle, paging));
+                    } catch (TwitterException e) {
+                        e.printStackTrace();
+                        return Optional.empty();
+                    }
+                })
+                .flatMap(Optional::stream)
+                .flatMap((Function<ResponseList<Status>, Stream<Status>>) Collection::stream)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -116,81 +98,37 @@ class TJTwitter {
 
     }
 
-    /**
-     * This method removes common English words from the list of words.
-     * Remove all words found in commonWords.txt  from the argument list.
-     * The count will not be given in commonWords.txt. You must count the number of words in this method.
-     * This method should NOT throw an exception.  Use try/catch.
-     */
-    @SuppressWarnings("unchecked")
-    public void removeCommonEnglishWords() {
-
-
+    List<String> toMessage(List<Status> statuses) {
+        return statuses.stream()
+                .map(Status::getText)
+                .collect(Collectors.toList());
     }
 
-    /**
-     * This method sorts the words in words in alphabetically (and lexicographic) order.
-     * You should use your sorting code you wrote earlier this year.
-     * Remove all empty strings while you are at it.
-     * @param terms
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> sortAndRemoveEmpties(List<String> terms) {
-        Collections.sort(removeEmptyStrings(terms));
-        return terms;
-    }
-
-    private List<String> removeEmptyStrings(List<String> terms) {
-        for (String s : terms) {
-            if (s.trim().equals(""))
-                terms.remove(s);
-        }
-        return terms;
-    }
-
-    /**
-     * This method calculates the word that appears the most times
-     * Consider case - should it be case sensitive?  The choice is yours.
-     *
-     * post will populate the frequencyMax variable with the frequency of the most common word
-     * @param words The words to search.
-     * @post will populate the frequencyMax variable with the frequency of the most common word
-     */
-    @SuppressWarnings("unchecked")
-    public Set<String> mostPopularWord(List<String> words) {
-        if (words.isEmpty()) {
-            throw new IllegalArgumentException("No words found for " + words);
+    List<String> loadCommonWordsFromLocation() throws IOException {
+        Optional<URL> commonWordsURL = getCommonWordsURL();
+        if (!commonWordsURL.isPresent()) {
+            throw new IllegalArgumentException("Could not find common words " + COMMON_WORDS_LOCATION);
         }
 
-        Map<String, Long> map = createFrequencyMap(words);
-        Optional<Long> maxOptional = calculateMax(map);
-        if (!maxOptional.isPresent()) {
-            throw new IllegalArgumentException("No maximum found for " + words);
-        }
-
-        long max = maxOptional.get();
-        return map.keySet()
-                .stream()
-                .filter(s -> map.get(s).equals(max))
-                .collect(Collectors.toSet());
+        return loadCommonWordsFromStream(commonWordsURL.get().openStream());
     }
 
-    Optional<Long> calculateMax(Map<String, Long> map) {
-        return map.values().stream().max(Long::compareTo);
+
+    Optional<URL> getCommonWordsURL() {
+        return Optional.ofNullable(getClass().getResource(TJTwitter.COMMON_WORDS_LOCATION));
     }
 
-    Map<String, Long> createFrequencyMap(List<String> words) {
-        return words.stream().collect(Collectors.toMap(Function.identity(), string -> words.stream()
-                .filter(s -> s.equals(string))
-                .count(), Long::max));
-
-  /*      return words.stream().collect(Collectors.toMap(
-                s -> s,
-                string ->
-                ),
-                new BinaryOperator<Long>();
-        );*/
+    List<String> loadCommonWordsFromStream(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        reader.close();
+        return reader.lines()
+                .map(String::trim)
+                .map(s -> s.split(" "))
+                .filter(strings -> strings.length == 1)
+                .map(strings -> strings[0])
+                .collect(Collectors.toList());
     }
+
 
     /**
      * This method removes common punctuation from each individual word.
@@ -203,11 +141,6 @@ class TJTwitter {
      */
     public String removePunctuation(String s) {
         return s.replaceAll("[^a-z'A-Z]", "").toLowerCase();
-    }
-
-    /******************  Part IV *******************/
-    public void investigate() {
-        //Enter your code here
     }
 
     /**
@@ -229,5 +162,14 @@ class TJTwitter {
             e.printStackTrace();
         }
         System.out.println();
+    }
+
+    /**
+     * This method tweets a given message.
+     *
+     * @param message a message you wish to Tweet out
+     */
+    public void tweetOut(String message) throws TwitterException {
+        twitter.updateStatus(message);
     }
 }
