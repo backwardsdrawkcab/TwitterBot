@@ -12,7 +12,7 @@ public class TJTwitterStatistics {
     final List<String> words = new ArrayList<>();
 
     public int getMaxFrequency() {
-        return Math.toIntExact(calculateMax(createFrequencyMap(words)).orElseThrow());
+        return Math.toIntExact(calculateMax(createFrequencyMap()).orElseThrow());
     }
 
     Optional<Long> calculateMax(Map<String, Long> map) {
@@ -21,7 +21,7 @@ public class TJTwitterStatistics {
 
     /******************  Part III - Test *******************/
 
-    Map<String, Long> createFrequencyMap(List<String> words) {
+    Map<String, Long> createFrequencyMap() {
         return words.stream().collect(Collectors.toMap(Function.identity(), string -> words.stream()
                 .filter(s -> s.equals(string))
                 .count(), Long::max));
@@ -30,7 +30,7 @@ public class TJTwitterStatistics {
     /******************  Part III - Tweet *******************/
 
     public String getMostPopularWord() {
-        return CollectionUtil.toSingle(mostPopularWord(words));
+        return CollectionUtil.toSingle(mostPopularWord());
     }
 
     /**
@@ -39,30 +39,24 @@ public class TJTwitterStatistics {
      * <p>
      * post will populate the maxFrequency variable with the frequency of the most common word
      *
-     * @param words The words to search.
      * @post will populate the maxFrequency variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public Set<String> mostPopularWord(List<String> words) {
+    public Set<String> mostPopularWord() {
         if (words.isEmpty()) {
-            throw new IllegalArgumentException("No words found for " + words);
+            throw new IllegalStateException("No words found for " + words);
         }
 
-        Map<String, Long> map = createFrequencyMap(words);
-        long max = calculateMax(words, map);
+        Map<String, Long> map = createFrequencyMap();
+        Optional<Long> max = calculateMax(map);
+        if(!max.isPresent()){
+            throw new IllegalStateException("No max found");
+        }
+
         return map.keySet()
                 .stream()
                 .filter(s -> map.get(s).equals(max))
                 .collect(Collectors.toSet());
-    }
-
-    long calculateMax(List<String> words, Map<String, Long> map) {
-        Optional<Long> maxOptional = calculateMax(map);
-        if (!maxOptional.isPresent()) {
-            throw new IllegalArgumentException("No maximum found for " + words);
-        }
-
-        return maxOptional.get();
     }
 
     public List<Status> getStatuses() {
@@ -90,12 +84,13 @@ public class TJTwitterStatistics {
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
      */
-    public void sortAndRemoveEntries() {
-        Collections.sort(removeEmptyStrings(words));
+    public List<String> sortAndRemoveEntries() {
+        Collections.sort(removeEmptyStrings());
+        return words;
     }
 
-    List<String> removeEmptyStrings(List<String> terms) {
-        return terms.stream()
+    List<String> removeEmptyStrings() {
+        return words.stream()
                 .map(String::trim)
                 .filter(s -> s.length() != 0)
                 .collect(Collectors.toList());

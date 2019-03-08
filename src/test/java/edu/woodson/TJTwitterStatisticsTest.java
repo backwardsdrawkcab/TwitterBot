@@ -7,9 +7,12 @@ import org.mockito.Mockito;
 import twitter4j.Status;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TJTwitterStatisticsTest {
     private TJTwitterStatistics statistics;
@@ -17,10 +20,12 @@ class TJTwitterStatisticsTest {
     @BeforeEach
     public void beforeEach() {
         this.statistics = new TJTwitterStatistics();
+        this.statistics.setValues(Collections.emptyList(), Arrays.asList("Death", "awaits", "you", "!", "!", ""));
     }
 
     @Test
     void calculateMax() {
+        assertEquals(2, statistics.calculateMax(statistics.createFrequencyMap()));
     }
 
     @Test
@@ -53,16 +58,18 @@ class TJTwitterStatisticsTest {
 
     @Test
     void removeCommonWords() {
+
     }
 
     @Test
     void removeEmptyStrings() {
+        assertTrue(statistics.removeEmptyStrings().isEmpty());
     }
 
     @Test
     void setValues() {
         List<Status> statuses = new StatusSupplier().create(1, 10);
-        List<String> words = Arrays.asList("test0", "test1");
+        List<String> words = Arrays.asList("it", "attacks");
         statistics.setValues(statuses, words);
 
         assertIterableEquals(statuses, statistics.statuses);
@@ -71,6 +78,8 @@ class TJTwitterStatisticsTest {
 
     @Test
     void sortAndRemoveEntries() {
+        List<String> words = statistics.sortAndRemoveEntries();
+        assertIterableEquals(Arrays.asList("help", "me", "please"), words);
     }
 
     private class StatusSupplier extends RandomSupplier<Status> {
