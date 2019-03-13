@@ -1,8 +1,12 @@
 package edu.woodson.lab;
 
+import edu.woodson.util.CollectionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.*;
+
+import static java.lang.Long.valueOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -15,46 +19,67 @@ class TJTwitterStatisticsTest {
 
     @BeforeEach
     void beforeEach(){
-        this.statistics = new TJTwitterStatistics();
-    }
-
-    @Test
-    void getMaxFrequency() {
+        this.statistics = new TJTwitterStatistics("test0", "test1", "", "test2", "test1");
     }
 
     @Test
     void calculateMax() {
+        Optional<Long> max = statistics.calculateMax(statistics.createFrequencyMap());
+        assertTrue(max.isPresent());
+        assertEquals(valueOf(2), max.get());
     }
 
     @Test
     void createFrequencyMap() {
+        Map<String, Long> map = statistics.createFrequencyMap();
+        assertEquals(3, map.size());
+        assertEquals(valueOf(1), map.get("test0"));
+        assertEquals(valueOf(2), map.get("test1"));
+        assertEquals(valueOf(1), map.get("test2"));
+    }
+
+    @Test
+    void getMaxFrequency() {
+        assertEquals(2, statistics.getMaxFrequency());
     }
 
     @Test
     void getMostPopularWord() {
+        assertEquals("test1", statistics.getMostPopularWord());
     }
 
     @Test
     void mostPopularWord() {
-    }
-
-    @Test
-    void getStatuses() {
+        Set<String> strings = statistics.mostPopularWord();
+        assertEquals(1, strings.size());
+        assertEquals("test1", CollectionUtil.toSingle(strings));
     }
 
     @Test
     void removeCommonWords() {
-    }
-
-    @Test
-    void setValues() {
-    }
-
-    @Test
-    void sortAndRemoveEntries() {
+        statistics.removeCommonWords(Arrays.asList("test1", "test2"));
+        assertEquals(1, statistics.words.size());
+        assertEquals("test0", CollectionUtil.toSingle(statistics.words));
     }
 
     @Test
     void removeEmptyStrings() {
+        statistics.removeEmptyStrings();
+
+        assertIterableEquals(Arrays.asList("test0", "test1", "test2", "test2"), statistics.words);
+    }
+
+    @Test
+    void setValues() {
+        List<String> words = Arrays.asList("a", "b", "c");
+        statistics.setValues(words);
+        assertIterableEquals(words, statistics.words);
+    }
+
+    @Test
+    void sortAndRemoveEntries() {
+        statistics.sortAndRemoveEntries();
+
+        assertIterableEquals(Arrays.asList("test0", "test1", "test1", "test2"), statistics.words);
     }
 }
