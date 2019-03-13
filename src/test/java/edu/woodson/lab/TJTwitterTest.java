@@ -7,6 +7,7 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -110,7 +111,11 @@ class TJTwitterTest {
     }
 
     @Test
-    void loadCommonWordsFromStream() {
+    void loadCommonWordsFromStream() throws IOException {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream("test0 test1".getBytes());
+        TJTwitter twitter = new TJTwitter(null);
+        List<String> words = twitter.loadCommonWordsFromStream(inputStream);
+        assertIterableEquals(Arrays.asList("test0", "test1"), words);
     }
 
     @Test
