@@ -55,9 +55,10 @@ public class TJTwitterStatistics {
             throw new IllegalStateException("No max found");
         }
 
+        long maxValue = max.orElse(-1L);
         return map.keySet()
                 .stream()
-                .filter(s -> map.get(s).equals(max))
+                .filter(s -> map.get(s).equals(maxValue))
                 .collect(Collectors.toSet());
     }
 
