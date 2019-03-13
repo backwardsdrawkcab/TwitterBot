@@ -4,6 +4,7 @@ import twitter4j.RateLimitStatus;
 import twitter4j.ResponseList;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author SirMathhman
@@ -11,6 +12,10 @@ import java.util.ArrayList;
  * @since 3/13/2019
  */
 public abstract class AbstractResponseList<T> extends ArrayList<T> implements ResponseList<T> {
+    public AbstractResponseList(Collection<? extends T> c) {
+        super(c);
+    }
+
     @Override
     public RateLimitStatus getRateLimitStatus() {
         return null;

@@ -48,7 +48,20 @@ class TJTwitterTest {
         TJTwitter twitter = new TJTwitter(new AbstractTwitter() {
             @Override
             public ResponseList<Status> getUserTimeline(String screenName, Paging paging) throws TwitterException {
-                return super.getUserTimeline(screenName, paging);
+                AbstractStatus status0 = new AbstractStatus() {
+                    @Override
+                    public String getText() {
+                        return "test0";
+                    }
+                };
+                AbstractStatus status1 = new AbstractStatus() {
+                    @Override
+                    public String getText() {
+                        return "test1";
+                    }
+                };
+                List<AbstractStatus> initial = Arrays.asList(status0, status1);
+                return new AbstractResponseList<>(initial) {};
             }
         });
 
