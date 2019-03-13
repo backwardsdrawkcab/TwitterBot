@@ -1,9 +1,15 @@
 package edu.woodson.lab;
 
 import org.junit.jupiter.api.Test;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.TwitterException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author SirMathhman
@@ -38,7 +44,18 @@ class TJTwitterTest {
     }
 
     @Test
-    void fetchTweets() {
+    void fetchTweets() throws TwitterException {
+        TJTwitter twitter = new TJTwitter(new AbstractTwitter() {
+            @Override
+            public ResponseList<Status> getUserTimeline(String screenName, Paging paging) throws TwitterException {
+                return super.getUserTimeline(screenName, paging);
+            }
+        });
+
+        String handle = "test";
+        Paging paging = new Paging();
+        List<Status> statuses = twitter.fetchTweets(paging, handle);
+        assertIterableEquals(Arrays.asList("test0", "test1"), statuses);
     }
 
     @Test
