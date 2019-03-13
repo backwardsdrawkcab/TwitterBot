@@ -13,8 +13,8 @@ public class TJTwitterStatistics {
         this.words.addAll(Arrays.asList(words));
     }
 
-    public int getMaxFrequency() {
-        return Math.toIntExact(calculateMax(createFrequencyMap()).orElseThrow());
+    public long getMaxFrequency() {
+        return calculateMax(createFrequencyMap()).orElseThrow();
     }
 
     Optional<Long> calculateMax(Map<String, Long> map) {
