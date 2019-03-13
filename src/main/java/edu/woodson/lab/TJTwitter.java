@@ -1,6 +1,9 @@
 package edu.woodson.lab;
 
-import twitter4j.*;
+import twitter4j.Paging;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,11 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 class TJTwitter {
@@ -67,21 +66,17 @@ class TJTwitter {
      *
      * @param handle the Twitter handle (username) without the @sign
      */
-    public List<Status> fetchTweets(String handle) {
+    public List<Status> fetchTweets(String handle) throws TwitterException {
         Paging paging = new Paging(1, 200);
-        return IntStream.range(1, 11)
-                .peek(paging::setPage)
-                .mapToObj((IntFunction<Optional<ResponseList<Status>>>) value -> {
-                    try {
-                        return Optional.of(twitter.getUserTimeline(handle, paging));
-                    } catch (TwitterException e) {
-                        e.printStackTrace();
-                        return Optional.empty();
-                    }
-                })
-                .flatMap(Optional::stream)
-                .flatMap((Function<ResponseList<Status>, Stream<Status>>) Collection::stream)
-                .collect(Collectors.toList());
+
+        List<Status> statusList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            paging.setPage(i);
+
+            statusList.addAll(twitter.getUserTimeline(handle, paging));
+        }
+
+        return statusList;
     }
 
     /**
