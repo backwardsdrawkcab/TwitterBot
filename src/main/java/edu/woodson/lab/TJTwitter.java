@@ -26,13 +26,13 @@ class TJTwitter {
     }
 
     public long getMaxFrequency() {
-        return statistics.getMaxFrequency();
+        return getStatistics().getMaxFrequency();
     }
 
     /******************  Part III - Tweet *******************/
 
     public String getMostPopularWord() {
-        return statistics.getMostPopularWord();
+        return getStatistics().getMostPopularWord();
     }
 
     public TJTwitterStatistics getStatistics() {
