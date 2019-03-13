@@ -65,9 +65,11 @@ public class TJTwitterStatistics {
         words.removeAll(commonWords);
     }
 
-    public void setValues(List<String> words) {
-        this.words.clear();
-        this.words.addAll(words);
+    List<String> removeEmptyStrings() {
+        return setValues(words.stream()
+                .map(String::trim)
+                .filter(s -> s.length() != 0)
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -80,14 +82,10 @@ public class TJTwitterStatistics {
         return words;
     }
 
-    List<String> removeEmptyStrings() {
-        List<String> list = new ArrayList<>();
-        for (String word : words) {
-            String s = word.trim();
-            if (s.length() != 0) {
-                list.add(s);
-            }
-        }
-        return list;
+    public List<String> setValues(List<String> words) {
+        this.words.clear();
+        this.words.addAll(words);
+
+        return words;
     }
 }
