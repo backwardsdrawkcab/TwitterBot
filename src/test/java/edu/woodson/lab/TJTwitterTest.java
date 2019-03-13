@@ -1,6 +1,9 @@
 package edu.woodson.lab;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import twitter4j.Twitter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,6 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3/13/2019
  */
 class TJTwitterTest {
+    private TJTwitter twitter;
+
+    @BeforeEach
+    void beforeEach(){
+        this.twitter = new TJTwitter(Mockito.mock(Twitter.class));
+    }
 
     @Test
     void getMaxFrequency() {
