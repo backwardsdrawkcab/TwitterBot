@@ -126,6 +126,15 @@ class TJTwitterTest {
     }
 
     @Test
-    void tweetOut() {
+    void tweetOut() throws TwitterException {
+        TJTwitter twitter = new TJTwitter(new AbstractTwitter() {
+            @Override
+            public Status updateStatus(String status) {
+                assertEquals("test", status);
+                return null;
+            }
+        });
+
+        twitter.tweetOut("test");
     }
 }
