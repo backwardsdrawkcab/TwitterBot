@@ -6,6 +6,7 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -82,7 +83,10 @@ class TJTwitterTest {
     }
 
     @Test
-    void loadCommonWordsFromLocation() {
+    void loadCommonWordsFromLocation() throws IOException {
+        TJTwitter twitter = new TJTwitter(null);
+        List<String> words = twitter.loadCommonWordsFromLocation();
+        assertFalse(words.isEmpty());
     }
 
     @Test
