@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -103,7 +104,7 @@ class TJTwitter {
                 .collect(Collectors.toList());
     }
 
-    List<String> toMessage(List<Status> statuses) {
+    List<String> toMessage(Collection<? extends Status> statuses) {
         return statuses.stream()
                 .map(Status::getText)
                 .collect(Collectors.toList());

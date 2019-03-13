@@ -1,5 +1,6 @@
 package edu.woodson.lab;
 
+import edu.woodson.util.CollectionUtil;
 import org.junit.jupiter.api.Test;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -9,6 +10,7 @@ import twitter4j.TwitterException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,6 +82,16 @@ class TJTwitterTest {
 
     @Test
     void toMessage() {
+        TJTwitter twitter = new TJTwitter(null);
+        List<String> strings = twitter.toMessage(Collections.singleton(new AbstractStatus() {
+            @Override
+            public String getText() {
+                return "test";
+            }
+        }));
+
+        assertEquals(1, strings.size());
+        assertEquals("test", CollectionUtil.toSingle(strings));
     }
 
     @Test
