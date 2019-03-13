@@ -1,5 +1,6 @@
 package edu.woodson.lab;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,6 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3/13/2019
  */
 class TJTwitterStatisticsTest {
+    private TJTwitterStatistics statistics;
+
+    @BeforeEach
+    void beforeEach(){
+        this.statistics = new TJTwitterStatistics();
+    }
 
     @Test
     void getMaxFrequency() {
