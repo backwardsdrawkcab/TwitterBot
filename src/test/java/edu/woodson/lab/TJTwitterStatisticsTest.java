@@ -32,7 +32,8 @@ class TJTwitterStatisticsTest {
     @Test
     void createFrequencyMap() {
         Map<String, Long> map = statistics.createFrequencyMap();
-        assertEquals(3, map.size());
+        assertEquals(4, map.size());
+        assertEquals(valueOf(1), map.get(""));
         assertEquals(valueOf(1), map.get("test0"));
         assertEquals(valueOf(2), map.get("test1"));
         assertEquals(valueOf(1), map.get("test2"));
@@ -80,6 +81,6 @@ class TJTwitterStatisticsTest {
     void sortAndRemoveEntries() {
         statistics.sortAndRemoveEntries();
 
-        assertIterableEquals(Arrays.asList("test0", "test1", "test1", "test2"), statistics.words);
+        assertIterableEquals(Arrays.asList("test0", "test1", "test2", "test1"), statistics.words);
     }
 }
