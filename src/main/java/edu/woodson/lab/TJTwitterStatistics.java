@@ -58,10 +58,6 @@ public class TJTwitterStatistics {
                 .collect(Collectors.toSet());
     }
 
-    public List<String> getWords() {
-        return words;
-    }
-
     public void removeCommonWords(List<String> commonWords) {
         words.removeAll(commonWords);
     }
