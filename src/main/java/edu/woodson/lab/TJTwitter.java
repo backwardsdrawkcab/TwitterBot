@@ -35,8 +35,12 @@ class TJTwitter {
         return statistics.getMostPopularWord();
     }
 
-    public Optional<TJTwitterStatistics> getStatistics() {
-        return Optional.ofNullable(statistics);
+    public TJTwitterStatistics getStatistics() {
+        if (statistics == null) {
+            throw new IllegalStateException("Statistics have not been found because nothing was queried yet.");
+        }
+
+        return statistics;
     }
 
     /**
