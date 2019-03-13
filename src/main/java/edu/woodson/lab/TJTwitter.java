@@ -34,12 +34,6 @@ class TJTwitter {
         return statistics.getMostPopularWord();
     }
 
-    /******************  Part IV *******************/
-    public void investigate() {
-        //Enter your code here
-        //TODO: put some code here
-    }
-
     /**
      * This method queries the tweets of a particular user's handle.
      *
@@ -137,27 +131,6 @@ class TJTwitter {
      */
     public String removePunctuation(String s) {
         return s.replaceAll("[^a-z'A-Z]", "").toLowerCase();
-    }
-
-    /**
-     * This method determines how many people in Arlington, VA
-     * tweet about the Miami Dolphins.  Hint:  not many. :(
-     */
-    public void sampleInvestigate() {
-        Query query = new Query("Miami Dolphins");
-        query.setCount(100);
-        query.setGeoCode(new GeoLocation(38.8372839, -77.1082443), 5, Query.MILES);
-        query.setSince("2015-12-1");
-        try {
-            QueryResult result = twitter.search(query);
-            System.out.println("Count : " + result.getTweets().size());
-            for (Status tweet : result.getTweets()) {
-                System.out.println("@" + tweet.getUser().getName() + ": " + tweet.getText());
-            }
-        } catch (TwitterException e) {
-            e.printStackTrace();
-        }
-        System.out.println();
     }
 
     /**
