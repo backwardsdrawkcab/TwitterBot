@@ -10,9 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 class TJTwitter {
     private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
@@ -45,11 +48,12 @@ class TJTwitter {
     /**
      * This method queries the tweets of a particular user's handle.
      *
+     * @param paging
      * @param handle the Twitter handle (username) without the @sign
      */
     @SuppressWarnings("unchecked")
-    public void queryHandle(String handle) throws IOException {
-        List<Status> statuses = fetchTweets(handle);
+    public void queryHandle(Paging paging, String handle) throws Exception {
+        List<Status> statuses = fetchTweets(paging, handle);
         List<String> words = splitIntoWords(toMessage(statuses));
         TJTwitterStatistics statistics = new TJTwitterStatistics();
         statistics.setValues(words);
@@ -64,13 +68,21 @@ class TJTwitter {
      * This method fetches the most recent 2,000 tweets of a particular user's handle and
      * stores them in an arrayList of Status objects.  Populates statuses.
      *
+     * @param paging
      * @param handle the Twitter handle (username) without the @sign
      */
-    public List<Status> fetchTweets(String handle) throws TwitterException {
-        Paging paging = new Paging(1, 200);
-
+    public List<Status> fetchTweets(Paging paging, String handle) throws TwitterException {
         List<Status> statusList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+
+        /*
+        Originally, I had this loop replaced with a Java 8 Stream.
+        That is a horrible decision, not only because of the exception in the body of the for loop,
+        but also because iteration is necessary for this code's readability.
+
+        Besides, there is no Paging.getPages() method, so it would be even more difficult
+        to set up a stream in that regard.
+         */
+        for (int i = 0; i < paging.getCount(); i++) {
             paging.setPage(i);
 
             statusList.addAll(twitter.getUserTimeline(handle, paging));
@@ -85,14 +97,10 @@ class TJTwitter {
      */
     public List<String> splitIntoWords(List<String> statuses) {
         return statuses.stream()
-                .map(StringTokenizer::new)
-                .map(Enumeration::asIterator)
-                .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
-                .map(Iterable::spliterator)
-                .flatMap(objectSpliterator -> StreamSupport.stream(objectSpliterator, false))
-                .map(Object::toString)
+                .map(s -> s.split(" "))
+                .map(Stream::of)
+                .flatMap(Function.identity())
                 .collect(Collectors.toList());
-
     }
 
     List<String> toMessage(List<Status> statuses) {
