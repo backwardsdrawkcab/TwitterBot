@@ -123,6 +123,9 @@ class TJTwitterTest {
 
     @Test
     void removePunctuation() {
+        TJTwitter twitter = new TJTwitter(null);
+        String result = twitter.removePunctuation("I don't like cheese!");
+        assertEquals("I dont like cheese", result);
     }
 
     @Test
