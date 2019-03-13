@@ -6,8 +6,10 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,6 +87,10 @@ class TJTwitterTest {
 
     @Test
     void getCommonWordsURL() {
+        TJTwitter twitter = new TJTwitter(null);
+        Optional<URL> url = twitter.getCommonWordsURL();
+        assertTrue(url.isPresent());
+        assertEquals(getClass().getResource("/commonWords.txt"), url.get());
     }
 
     @Test
