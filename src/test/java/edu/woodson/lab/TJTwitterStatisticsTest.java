@@ -43,10 +43,6 @@ class TJTwitterStatisticsTest {
     }
 
     @Test
-    void getWords() {
-    }
-
-    @Test
     void removeCommonWords() {
     }
 
