@@ -1,6 +1,9 @@
 package edu.woodson.lab;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author SirMathhman
@@ -8,6 +11,12 @@ import org.junit.jupiter.api.Test;
  * @since 3/13/2019
  */
 class TJTwitterTest {
+    @Test
+    void getStatistics() {
+        TJTwitter twitter = new TJTwitter(null);
+        assertThrows(IllegalStateException.class, twitter::getStatistics);
+    }
+
     @Test
     void getMaxFrequency() {
     }
