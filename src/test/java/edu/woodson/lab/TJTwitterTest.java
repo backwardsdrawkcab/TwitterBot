@@ -53,7 +53,7 @@ class TJTwitterTest {
     void fetchTweets() throws TwitterException {
         TJTwitter twitter = new TJTwitter(new AbstractTwitter() {
             @Override
-            public ResponseList<Status> getUserTimeline(String screenName, Paging paging) throws TwitterException {
+            public ResponseList<Status> getUserTimeline(String screenName, Paging paging) {
                 AbstractStatus status0 = new AbstractStatus() {
                     @Override
                     public String getText() {
