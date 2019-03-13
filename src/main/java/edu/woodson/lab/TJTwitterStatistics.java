@@ -50,12 +50,8 @@ public class TJTwitterStatistics {
         }
 
         Map<String, Long> map = createFrequencyMap();
-        Optional<Long> max = calculateMax(map);
-        if(!max.isPresent()){
-            throw new IllegalStateException("No max found");
-        }
+        long maxValue = getMaxFrequency();
 
-        long maxValue = max.orElse(-1L);
         return map.keySet()
                 .stream()
                 .filter(s -> map.get(s).equals(maxValue))
