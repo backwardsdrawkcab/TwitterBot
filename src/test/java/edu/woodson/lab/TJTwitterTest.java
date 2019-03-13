@@ -9,6 +9,7 @@ import twitter4j.TwitterException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,6 +80,9 @@ class TJTwitterTest {
 
     @Test
     void splitIntoWords() {
+        TJTwitter twitter = new TJTwitter(null);
+        List<String> words = twitter.splitIntoWords(Arrays.asList("test0 test1"));
+        assertIterableEquals(Arrays.asList("test0", "test1"), words);
     }
 
     @Test
