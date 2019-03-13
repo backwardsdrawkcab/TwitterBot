@@ -24,7 +24,7 @@ class TJTwitter {
         this.twitter = twitter;
     }
 
-    public int getMaxFrequency() {
+    public long getMaxFrequency() {
         return statistics.getMaxFrequency();
     }
 
