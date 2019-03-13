@@ -69,7 +69,7 @@ class TJTwitterTest {
         });
 
         String handle = "test";
-        Paging paging = new Paging();
+        Paging paging = new Paging(1,1);
 
         twitter.queryHandle(paging, handle);
         List<String> words = twitter.statistics.words;
@@ -99,9 +99,9 @@ class TJTwitterTest {
         });
 
         String handle = "test";
-        Paging paging = new Paging();
+        Paging paging = new Paging(1, 1);
         List<Status> statuses = twitter.fetchTweets(paging, handle);
-        assertIterableEquals(Arrays.asList("test0", "test1"), statuses);
+        assertIterableEquals(Arrays.asList("test0", "test1"), twitter.toMessage(statuses));
     }
 
     @Test
@@ -142,7 +142,7 @@ class TJTwitterTest {
 
     @Test
     void loadCommonWordsFromStream() throws IOException {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream("test0 test1".getBytes());
+        ByteArrayInputStream inputStream = new ByteArrayInputStream("test0\ntest1".getBytes());
         TJTwitter twitter = new TJTwitter(null);
         List<String> words = twitter.loadCommonWordsFromStream(inputStream);
         assertIterableEquals(Arrays.asList("test0", "test1"), words);
@@ -152,7 +152,7 @@ class TJTwitterTest {
     void removePunctuation() {
         TJTwitter twitter = new TJTwitter(null);
         String result = twitter.removePunctuation("I don't like cheese!");
-        assertEquals("I dont like cheese", result);
+        assertEquals("idon'tlikecheese", result);
     }
 
     @Test

@@ -83,7 +83,7 @@ class TJTwitter {
         Besides, there is no Paging.getPages() method, so it would be even more difficult
         to set up a stream in that regard.
          */
-        for (int i = 0; i < paging.getCount(); i++) {
+        for (int i = 1; i <= paging.getCount(); i++) {
             paging.setPage(i);
 
             statusList.addAll(twitter.getUserTimeline(handle, paging));
@@ -126,13 +126,14 @@ class TJTwitter {
 
     List<String> loadCommonWordsFromStream(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        reader.close();
-        return reader.lines()
+        List<String> lines = reader.lines()
                 .map(String::trim)
                 .map(s -> s.split(" "))
                 .filter(strings -> strings.length == 1)
                 .map(strings -> strings[0])
                 .collect(Collectors.toList());
+        reader.close();
+        return lines;
     }
 
 
