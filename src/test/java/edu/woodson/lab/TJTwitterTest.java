@@ -1,9 +1,9 @@
 package edu.woodson.lab;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author SirMathhman
@@ -19,10 +19,18 @@ class TJTwitterTest {
 
     @Test
     void getMaxFrequency() {
+        TJTwitter twitter = new TJTwitter(null);
+        twitter.statistics = new TJTwitterStatistics("test0", "test1", "test1");
+
+        assertEquals(2, twitter.getMaxFrequency());
     }
 
     @Test
     void getMostPopularWord() {
+        TJTwitter twitter = new TJTwitter(null);
+        twitter.statistics = new TJTwitterStatistics("test0", "test1", "test1");
+
+        assertEquals("test1", twitter.getMostPopularWord());
     }
 
     @Test

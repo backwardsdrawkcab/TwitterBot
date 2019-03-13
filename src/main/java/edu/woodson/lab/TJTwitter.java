@@ -21,7 +21,7 @@ class TJTwitter {
     private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
     private final Twitter twitter;
 
-    private TJTwitterStatistics statistics;
+    TJTwitterStatistics statistics;
 
     public TJTwitter(Twitter twitter) {
         this.twitter = twitter;
