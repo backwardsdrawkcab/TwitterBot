@@ -59,8 +59,9 @@ class TJTwitterStatisticsTest {
     @Test
     void removeCommonWords() {
         statistics.removeCommonWords(Arrays.asList("test1", "test2"));
-        assertEquals(1, statistics.words.size());
-        assertEquals("test0", CollectionUtil.toSingle(statistics.words));
+        assertEquals(2, statistics.words.size());
+        assertTrue(statistics.words.contains("test0"));
+        assertTrue(statistics.words.contains(""));
     }
 
     @Test
