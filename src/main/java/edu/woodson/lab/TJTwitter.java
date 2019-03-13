@@ -17,8 +17,9 @@ import java.util.stream.StreamSupport;
 
 class TJTwitter {
     private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
-    private final TJTwitterStatistics statistics = new TJTwitterStatistics();
     private final Twitter twitter;
+
+    private TJTwitterStatistics statistics;
 
     public TJTwitter(Twitter twitter) {
         this.twitter = twitter;
@@ -34,6 +35,10 @@ class TJTwitter {
         return statistics.getMostPopularWord();
     }
 
+    public Optional<TJTwitterStatistics> getStatistics() {
+        return Optional.ofNullable(statistics);
+    }
+
     /**
      * This method queries the tweets of a particular user's handle.
      *
@@ -43,10 +48,13 @@ class TJTwitter {
     public void queryHandle(String handle) throws IOException {
         List<Status> statuses = fetchTweets(handle);
         List<String> words = splitIntoWords(toMessage(statuses));
+        TJTwitterStatistics statistics = new TJTwitterStatistics();
         statistics.setValues(words);
 
         statistics.removeCommonWords(loadCommonWordsFromLocation());
         statistics.sortAndRemoveEntries();
+
+        this.statistics = statistics;
     }
 
     /**
