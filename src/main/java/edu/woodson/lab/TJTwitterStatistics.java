@@ -1,7 +1,6 @@
 package edu.woodson.lab;
 
 import edu.woodson.util.CollectionUtil;
-import twitter4j.Status;
 
 import java.util.*;
 import java.util.function.Function;
@@ -9,6 +8,10 @@ import java.util.stream.Collectors;
 
 public class TJTwitterStatistics {
     final List<String> words = new ArrayList<>();
+
+    public TJTwitterStatistics(String... words) {
+        this.words.addAll(Arrays.asList(words));
+    }
 
     public int getMaxFrequency() {
         return Math.toIntExact(calculateMax(createFrequencyMap()).orElseThrow());
