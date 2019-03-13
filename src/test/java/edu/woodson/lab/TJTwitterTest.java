@@ -46,7 +46,34 @@ class TJTwitterTest {
     }
 
     @Test
-    void queryHandle() {
+    void queryHandle() throws Exception {
+        TJTwitter twitter = new TJTwitter(new AbstractTwitter() {
+            @Override
+            public ResponseList<Status> getUserTimeline(String screenName, Paging paging) {
+                AbstractStatus status0 = new AbstractStatus() {
+                    @Override
+                    public String getText() {
+                        return "test0";
+                    }
+                };
+                AbstractStatus status1 = new AbstractStatus() {
+                    @Override
+                    public String getText() {
+                        return "test1";
+                    }
+                };
+                List<AbstractStatus> initial = Arrays.asList(status0, status1);
+                return new AbstractResponseList<>(initial) {
+                };
+            }
+        });
+
+        String handle = "test";
+        Paging paging = new Paging();
+
+        twitter.queryHandle(paging, handle);
+        List<String> words = twitter.statistics.words;
+        assertIterableEquals(Arrays.asList("test0", "test1"), words);
     }
 
     @Test
