@@ -48,8 +48,8 @@ class TJTwitter {
     @SuppressWarnings("unchecked")
     public void queryHandle(String handle) throws IOException {
         List<Status> statuses = fetchTweets(handle);
-        List<String> words = splitIntoWords(toMessage(statistics.getStatuses()));
-        statistics.setValues(statuses, words);
+        List<String> words = splitIntoWords(toMessage(statuses));
+        statistics.setValues(words);
 
         statistics.removeCommonWords(loadCommonWordsFromLocation());
         statistics.sortAndRemoveEntries();

@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TJTwitterStatistics {
-    final List<Status> statuses = new ArrayList<>();
     final List<String> words = new ArrayList<>();
 
     public int getMaxFrequency() {
@@ -59,10 +58,6 @@ public class TJTwitterStatistics {
                 .collect(Collectors.toSet());
     }
 
-    public List<Status> getStatuses() {
-        return statuses;
-    }
-
     public List<String> getWords() {
         return words;
     }
@@ -71,10 +66,7 @@ public class TJTwitterStatistics {
         words.removeAll(commonWords);
     }
 
-    public void setValues(List<Status> statuses, List<String> words) {
-        this.statuses.clear();
-        this.statuses.addAll(statuses);
-
+    public void setValues(List<String> words) {
         this.words.clear();
         this.words.addAll(words);
     }
