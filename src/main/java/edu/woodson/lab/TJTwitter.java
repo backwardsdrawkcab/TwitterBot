@@ -1,85 +1,95 @@
-package edu.woodson;
+package edu.woodson.lab;
 
-import com.julienvey.trello.Trello;
-import com.julienvey.trello.domain.TList;
-import com.julienvey.trello.impl.TrelloImpl;
-import com.julienvey.trello.impl.http.ApacheHttpClient;
-import twitter4j.*;
+import twitter4j.Paging;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 class TJTwitter {
     private static final String COMMON_WORDS_LOCATION = "/commonWords.txt";
-    private final TJTwitterStatistics statistics = new TJTwitterStatistics();
     private final Twitter twitter;
+
+    TJTwitterStatistics statistics;
 
     public TJTwitter(Twitter twitter) {
         this.twitter = twitter;
     }
 
-    public int getMaxFrequency() {
-        return statistics.getMaxFrequency();
+    public long getMaxFrequency() {
+        return getStatistics().getMaxFrequency();
     }
 
     /******************  Part III - Tweet *******************/
 
     public String getMostPopularWord() {
-        return statistics.getMostPopularWord();
+        return getStatistics().getMostPopularWord();
     }
 
-    /******************  Part IV *******************/
-    public void investigate() {
-        //Enter your code here
-        //TODO: put some code here
+    public TJTwitterStatistics getStatistics() {
+        if (statistics == null) {
+            throw new IllegalStateException("Statistics have not been found because nothing was queried yet.");
+        }
+
+        return statistics;
     }
 
     /**
      * This method queries the tweets of a particular user's handle.
      *
+     * @param paging
      * @param handle the Twitter handle (username) without the @sign
      */
     @SuppressWarnings("unchecked")
-    public void queryHandle(String handle) throws IOException {
-        List<Status> statuses = fetchTweets(handle);
-        List<String> words = splitIntoWords(toMessage(statistics.getStatuses()));
-        statistics.setValues(statuses, words);
+    public void queryHandle(Paging paging, String handle) throws Exception {
+        List<Status> statuses = fetchTweets(paging, handle);
+        List<String> words = splitIntoWords(toMessage(statuses));
+        TJTwitterStatistics statistics = new TJTwitterStatistics();
+        statistics.setValues(words);
 
         statistics.removeCommonWords(loadCommonWordsFromLocation());
         statistics.sortAndRemoveEntries();
+
+        this.statistics = statistics;
     }
 
     /**
      * This method fetches the most recent 2,000 tweets of a particular user's handle and
      * stores them in an arrayList of Status objects.  Populates statuses.
      *
+     * @param paging
      * @param handle the Twitter handle (username) without the @sign
      */
-    public List<Status> fetchTweets(String handle) {
-        Paging paging = new Paging(1, 200);
-        return IntStream.range(1, 11)
-                .peek(paging::setPage)
-                .mapToObj((IntFunction<Optional<ResponseList<Status>>>) value -> {
-                    try {
-                        return Optional.of(twitter.getUserTimeline(handle, paging));
-                    } catch (TwitterException e) {
-                        e.printStackTrace();
-                        return Optional.empty();
-                    }
-                })
-                .flatMap(Optional::stream)
-                .flatMap((Function<ResponseList<Status>, Stream<Status>>) Collection::stream)
-                .collect(Collectors.toList());
+    public List<Status> fetchTweets(Paging paging, String handle) throws TwitterException {
+        List<Status> statusList = new ArrayList<>();
+
+        /*
+        Originally, I had this loop replaced with a Java 8 Stream.
+        That is a horrible decision, not only because of the exception in the body of the for loop,
+        but also because iteration is necessary for this code's readability.
+
+        Besides, there is no Paging.getPages() method, so it would be even more difficult
+        to set up a stream in that regard.
+         */
+        for (int i = 1; i <= paging.getCount(); i++) {
+            paging.setPage(i);
+
+            statusList.addAll(twitter.getUserTimeline(handle, paging));
+        }
+
+        return statusList;
     }
 
     /**
@@ -88,17 +98,13 @@ class TJTwitter {
      */
     public List<String> splitIntoWords(List<String> statuses) {
         return statuses.stream()
-                .map(StringTokenizer::new)
-                .map(Enumeration::asIterator)
-                .map(objectIterator -> (Iterable<Object>) () -> objectIterator)
-                .map(Iterable::spliterator)
-                .flatMap(objectSpliterator -> StreamSupport.stream(objectSpliterator, false))
-                .map(Object::toString)
+                .map(s -> s.split(" "))
+                .map(Stream::of)
+                .flatMap(Function.identity())
                 .collect(Collectors.toList());
-
     }
 
-    List<String> toMessage(List<Status> statuses) {
+    List<String> toMessage(Collection<? extends Status> statuses) {
         return statuses.stream()
                 .map(Status::getText)
                 .collect(Collectors.toList());
@@ -120,13 +126,14 @@ class TJTwitter {
 
     List<String> loadCommonWordsFromStream(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        reader.close();
-        return reader.lines()
+        List<String> lines = reader.lines()
                 .map(String::trim)
                 .map(s -> s.split(" "))
                 .filter(strings -> strings.length == 1)
                 .map(strings -> strings[0])
                 .collect(Collectors.toList());
+        reader.close();
+        return lines;
     }
 
 
@@ -141,27 +148,6 @@ class TJTwitter {
      */
     public String removePunctuation(String s) {
         return s.replaceAll("[^a-z'A-Z]", "").toLowerCase();
-    }
-
-    /**
-     * This method determines how many people in Arlington, VA
-     * tweet about the Miami Dolphins.  Hint:  not many. :(
-     */
-    public void sampleInvestigate() {
-        Query query = new Query("Miami Dolphins");
-        query.setCount(100);
-        query.setGeoCode(new GeoLocation(38.8372839, -77.1082443), 5, Query.MILES);
-        query.setSince("2015-12-1");
-        try {
-            QueryResult result = twitter.search(query);
-            System.out.println("Count : " + result.getTweets().size());
-            for (Status tweet : result.getTweets()) {
-                System.out.println("@" + tweet.getUser().getName() + ": " + tweet.getText());
-            }
-        } catch (TwitterException e) {
-            e.printStackTrace();
-        }
-        System.out.println();
     }
 
     /**

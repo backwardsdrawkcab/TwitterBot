@@ -1,18 +1,20 @@
-package edu.woodson;
+package edu.woodson.lab;
 
 import edu.woodson.util.CollectionUtil;
-import twitter4j.Status;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TJTwitterStatistics {
-    final List<Status> statuses = new ArrayList<>();
     final List<String> words = new ArrayList<>();
 
-    public int getMaxFrequency() {
-        return Math.toIntExact(calculateMax(createFrequencyMap()).orElseThrow());
+    public TJTwitterStatistics(String... words) {
+        this.words.addAll(Arrays.asList(words));
+    }
+
+    public long getMaxFrequency() {
+        return calculateMax(createFrequencyMap()).orElseThrow();
     }
 
     Optional<Long> calculateMax(Map<String, Long> map) {
@@ -48,35 +50,23 @@ public class TJTwitterStatistics {
         }
 
         Map<String, Long> map = createFrequencyMap();
-        Optional<Long> max = calculateMax(map);
-        if(!max.isPresent()){
-            throw new IllegalStateException("No max found");
-        }
+        long maxValue = getMaxFrequency();
 
         return map.keySet()
                 .stream()
-                .filter(s -> map.get(s).equals(max))
+                .filter(s -> map.get(s).equals(maxValue))
                 .collect(Collectors.toSet());
-    }
-
-    public List<Status> getStatuses() {
-        return statuses;
-    }
-
-    public List<String> getWords() {
-        return words;
     }
 
     public void removeCommonWords(List<String> commonWords) {
         words.removeAll(commonWords);
     }
 
-    public void setValues(List<Status> statuses, List<String> words) {
-        this.statuses.clear();
-        this.statuses.addAll(statuses);
-
-        this.words.clear();
-        this.words.addAll(words);
+    List<String> removeEmptyStrings() {
+        return setValues(words.stream()
+                .map(String::trim)
+                .filter(s -> s.length() != 0)
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -89,10 +79,10 @@ public class TJTwitterStatistics {
         return words;
     }
 
-    List<String> removeEmptyStrings() {
-        return words.stream()
-                .map(String::trim)
-                .filter(s -> s.length() != 0)
-                .collect(Collectors.toList());
+    public List<String> setValues(List<String> words) {
+        this.words.clear();
+        this.words.addAll(words);
+
+        return words;
     }
 }
