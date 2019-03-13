@@ -66,7 +66,7 @@ class TJTwitterStatisticsTest {
     void removeEmptyStrings() {
         statistics.removeEmptyStrings();
 
-        assertIterableEquals(Arrays.asList("test0", "test1", "test2", "test2"), statistics.words);
+        assertIterableEquals(Arrays.asList("test0", "test1", "test2", "test1"), statistics.words);
     }
 
     @Test

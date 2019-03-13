@@ -81,9 +81,13 @@ public class TJTwitterStatistics {
     }
 
     List<String> removeEmptyStrings() {
-        return words.stream()
-                .map(String::trim)
-                .filter(s -> s.length() != 0)
-                .collect(Collectors.toList());
+        List<String> list = new ArrayList<>();
+        for (String word : words) {
+            String s = word.trim();
+            if (s.length() != 0) {
+                list.add(s);
+            }
+        }
+        return list;
     }
 }
