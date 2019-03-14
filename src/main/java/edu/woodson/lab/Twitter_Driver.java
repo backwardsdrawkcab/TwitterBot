@@ -16,41 +16,31 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Twitter_Driver {
+
+    private static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         try {
-            PrintStream consolePrint = System.out;
+            TJTwitter bigBird = buildTJTwitter();
 
 
-            Configuration builder = new ConfigurationBuilder()
-                    .setDebugEnabled(true)
-                    .setOAuthConsumerKey("egk7giRtajHZYXBbKAjzSVhWb")
-                    .setOAuthConsumerSecret("bLiAVPF6q14TIztSlsatAKRGUenRKQC5MKtWEfAB8xTfqweeHr")
-                    .setOAuthAccessToken("1059514626868740096-T5G4cTrK6NExdx1j33ss69X9ODnMq4")
-                    .setOAuthAccessTokenSecret("pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY")
-                    .build();
+            while (true) {
+                System.out.print("Please enter a Twitter handle, do not include the @ symbol --> ");
+                String token = scanner.nextLine();
+                if (token.equals("done")) {
+                    break;
+                }
 
-            Twitter twitter = new TwitterFactory(builder).getInstance();
-            TJTwitter bigBird = new TJTwitter(twitter);
-
-            Scanner scan = new Scanner(System.in);
-            consolePrint.print("Please enter a Twitter handle, do not include the @symbol --> ");
-            String twitter_handle = scan.next();
-
-            // Find and print the most popular word they tweet
-            while (!twitter_handle.equals("done")) {
-                bigBird.queryHandle(new Paging(1, 200), twitter_handle);
-                consolePrint.println("The most common word from @" + twitter_handle + " is: " + bigBird.getMostPopularWord() + ".");
-                consolePrint.println("The word appears " + bigBird.getMaxFrequency() + " times.");
-                consolePrint.println();
-                consolePrint.print("Please enter a Twitter handle, do not include the @ symbol --> ");
-                twitter_handle = scan.next();
+                int count = nextNumber();
+                TJTwitterStatistics statistics = bigBird.queryHandle(new Paging(1, count), token);
+                System.out.println("The most common word from @" + token + " is: " + statistics.getMostPopularWord() + ".");
+                System.out.println("The word appears " + statistics.getMaxFrequency() + " times.\n");
             }
 
             // PART IV
@@ -61,7 +51,7 @@ public class Twitter_Driver {
             final String TOKEN = "186d9044cd5dfdb60c3b5ab3befb2aaeb2daddccdd05244ce152743701fec680";
 
             System.out.println("Enter the Trello board id to listen to: ");
-            String boardId = scan.next();
+            String boardId = scanner.next();
 
             Trello trello = new TrelloImpl(API_KEY, TOKEN, new ApacheHttpClient());
 
@@ -110,6 +100,30 @@ public class Twitter_Driver {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static int nextNumber() {
+        do {
+            String token = scanner.nextLine();
+            try {
+                return Integer.parseInt(token);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid token " + token + " please enter in another number");
+            }
+        } while (true);
+    }
+
+    private static TJTwitter buildTJTwitter() {
+        Configuration builder = new ConfigurationBuilder()
+                .setDebugEnabled(true)
+                .setOAuthConsumerKey("egk7giRtajHZYXBbKAjzSVhWb")
+                .setOAuthConsumerSecret("bLiAVPF6q14TIztSlsatAKRGUenRKQC5MKtWEfAB8xTfqweeHr")
+                .setOAuthAccessToken("1059514626868740096-T5G4cTrK6NExdx1j33ss69X9ODnMq4")
+                .setOAuthAccessTokenSecret("pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY")
+                .build();
+
+        Twitter twitter = new TwitterFactory(builder).getInstance();
+        return new TJTwitter(twitter);
     }
 }
 

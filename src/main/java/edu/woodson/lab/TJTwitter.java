@@ -32,18 +32,18 @@ class TJTwitter {
         return getStatistics().getMaxFrequency();
     }
 
-    /******************  Part III - Tweet *******************/
-
-    public String getMostPopularWord() {
-        return getStatistics().getMostPopularWord();
-    }
-
     public TJTwitterStatistics getStatistics() {
         if (statistics == null) {
             throw new IllegalStateException("Statistics have not been found because nothing was queried yet.");
         }
 
         return statistics;
+    }
+
+    /******************  Part III - Tweet *******************/
+
+    public String getMostPopularWord() {
+        return getStatistics().getMostPopularWord();
     }
 
     /**
@@ -53,7 +53,7 @@ class TJTwitter {
      * @param handle the Twitter handle (username) without the @sign
      */
     @SuppressWarnings("unchecked")
-    public void queryHandle(Paging paging, String handle) throws Exception {
+    public TJTwitterStatistics queryHandle(Paging paging, String handle) throws Exception {
         List<Status> statuses = fetchTweets(paging, handle);
         List<String> words = splitIntoWords(toMessage(statuses));
         TJTwitterStatistics statistics = new TJTwitterStatistics();
@@ -63,6 +63,7 @@ class TJTwitter {
         statistics.sortAndRemoveEntries();
 
         this.statistics = statistics;
+        return statistics;
     }
 
     /**
