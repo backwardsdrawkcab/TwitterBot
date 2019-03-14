@@ -22,6 +22,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Twitter_Driver {
+    private static final String API_KEY = "6a888dffccb4c413711d7d617057fa07";
+    private static final String TOKEN = "186d9044cd5dfdb60c3b5ab3befb2aaeb2daddccdd05244ce152743701fec680";
+    private static final String O_AUTH_CONSUMER_KEY = "egk7giRtajHZYXBbKAjzSVhWb";
+    private static final String O_AUTH_ACCESS_TOKEN = "1059514626868740096-T5G4cTrK6NExdx1j33ss69X9ODnMq4";
+    private static final String O_AUTH_ACCESS_TOKEN_SECRET = "pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY";
+    private static final String O_AUTH_CONSUMER_SECRET = "bLiAVPF6q14TIztSlsatAKRGUenRKQC5MKtWEfAB8xTfqweeHr";
+
     private static Scanner scanner = new Scanner(System.in);
     private static TJTwitter twitter = buildTJTwitter();
 
@@ -32,10 +39,6 @@ public class Twitter_Driver {
             // PART IV
             //bigBird.investigate();
             Timer timer = new Timer();
-
-            final String API_KEY = "6a888dffccb4c413711d7d617057fa07";
-            final String TOKEN = "186d9044cd5dfdb60c3b5ab3befb2aaeb2daddccdd05244ce152743701fec680";
-
             System.out.println("Enter the Trello board id to listen to: ");
             String boardId = scanner.next();
 
@@ -117,10 +120,10 @@ public class Twitter_Driver {
     private static TJTwitter buildTJTwitter() {
         Configuration builder = new ConfigurationBuilder()
                 .setDebugEnabled(true)
-                .setOAuthConsumerKey("egk7giRtajHZYXBbKAjzSVhWb")
-                .setOAuthConsumerSecret("bLiAVPF6q14TIztSlsatAKRGUenRKQC5MKtWEfAB8xTfqweeHr")
-                .setOAuthAccessToken("1059514626868740096-T5G4cTrK6NExdx1j33ss69X9ODnMq4")
-                .setOAuthAccessTokenSecret("pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY")
+                .setOAuthConsumerKey(O_AUTH_CONSUMER_KEY)
+                .setOAuthConsumerSecret(O_AUTH_CONSUMER_SECRET)
+                .setOAuthAccessToken(O_AUTH_ACCESS_TOKEN)
+                .setOAuthAccessTokenSecret(O_AUTH_ACCESS_TOKEN_SECRET)
                 .build();
 
         return new TJTwitter(new TwitterFactory(builder).getInstance());
