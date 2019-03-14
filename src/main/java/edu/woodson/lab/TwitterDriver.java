@@ -15,14 +15,13 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Supplier;
 
-public class Twitter_Driver {
+public class TwitterDriver {
     private static final String API_KEY = "6a888dffccb4c413711d7d617057fa07";
     private static final String TOKEN = "186d9044cd5dfdb60c3b5ab3befb2aaeb2daddccdd05244ce152743701fec680";
     private static final String O_AUTH_CONSUMER_KEY = "egk7giRtajHZYXBbKAjzSVhWb";
@@ -30,12 +29,16 @@ public class Twitter_Driver {
     private static final String O_AUTH_ACCESS_TOKEN_SECRET = "pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY";
     private static final String O_AUTH_CONSUMER_SECRET = "bLiAVPF6q14TIztSlsatAKRGUenRKQC5MKtWEfAB8xTfqweeHr";
 
-    private static Scanner scanner = new Scanner(System.in);
-    private static TJTwitter twitter = buildTJTwitter();
+    private final Scanner scanner = new Scanner(System.in);
+    private final TJTwitter twitter = buildTJTwitter();
 
     public static void main(String[] args) {
+         new TwitterDriver().start();
+    }
+
+    public void start(){
         try {
-            printStatistics(System.out);
+            printStatistics();
 
             // PART IV
             //bigBird.investigate();
@@ -53,9 +56,9 @@ public class Twitter_Driver {
         }
     }
 
-    private static void printStatistics(PrintStream out) throws Exception {
+    private void printStatistics() throws Exception {
         while (true) {
-            out.print("Please enter a Twitter handle, do not include the @ symbol --> ");
+            System.out.print("Please enter a Twitter handle, do not include the @ symbol --> ");
             String token = scanner.nextLine();
             if (token.equals("done")) {
                 break;
@@ -63,12 +66,12 @@ public class Twitter_Driver {
 
             int count = checkInput(scanner::nextLine);
             TJTwitterStatistics statistics = twitter.queryHandle(new Paging(1, count), token);
-            out.println("The most common word from @" + token + " is: " + statistics.getMostPopularWord() + ".");
-            out.println("The word appears " + statistics.getMaxFrequency() + " times.\n");
+            System.out.println("The most common word from @" + token + " is: " + statistics.getMostPopularWord() + ".");
+            System.out.println("The word appears " + statistics.getMaxFrequency() + " times.\n");
         }
     }
 
-    private static int checkInput(Supplier<String> supplier) {
+    private int checkInput(Supplier<String> supplier) {
         do {
             String next = supplier.get();
             try {
@@ -79,7 +82,7 @@ public class Twitter_Driver {
         } while (true);
     }
 
-    private static TJTwitter buildTJTwitter() {
+    private TJTwitter buildTJTwitter() {
         Configuration builder = new ConfigurationBuilder()
                 .setDebugEnabled(true)
                 .setOAuthConsumerKey(O_AUTH_CONSUMER_KEY)
@@ -91,7 +94,7 @@ public class Twitter_Driver {
         return new TJTwitter(new TwitterFactory(builder).getInstance());
     }
 
-    private static class Twitter_Driver_Task extends TimerTask {
+    private class Twitter_Driver_Task extends TimerTask {
         private final Trello trello;
         private final String boardId;
         public Board board;
