@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Supplier;
 
 public class Twitter_Driver {
     private static final String API_KEY = "6a888dffccb4c413711d7d617057fa07";
@@ -43,48 +44,9 @@ public class Twitter_Driver {
             String boardId = scanner.next();
 
             Trello trello = new TrelloImpl(API_KEY, TOKEN, new ApacheHttpClient());
+            Twitter_Driver_Task task = new Twitter_Driver_Task(trello, boardId);
 
-
-            final Board[] board = new Board[1];
-            final TrelloList[] oldTrelloList = new TrelloList[1];
-
-            final int[] time = {0};
-            final boolean[] initial = {true};
-            TimerTask listenForMovedCards = new TimerTask() {
-                @Override
-                public void run() {
-                    if (initial[0]) {
-                        board[0] = trello.getBoard(boardId);
-                        List<TList> oldLists = board[0].fetchLists();
-                        oldTrelloList[0] = TrelloForTwitter.getTrelloList(trello, oldLists);
-                        initial[0] = false;
-                    }
-
-
-                    if (time[0] == 3) {
-                        initial[0] = true;
-
-                        Board newBoard = trello.getBoard(boardId);
-                        List<TList> newLists = newBoard.fetchLists();
-                        TrelloList newTrelloList = TrelloForTwitter.getTrelloList(trello, newLists);
-
-                        MovedCard moved = TrelloForTwitter.findMovedCard(board[0], oldTrelloList[0], newTrelloList);
-
-                        if (moved != null) {
-                            try {
-                                twitter.tweetOut("You moved " + moved.getName() + " from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
-                            } catch (TwitterException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        time[0] = 0;
-                    }
-                    time[0]++;
-                }
-            };
-
-            timer.scheduleAtFixedRate(listenForMovedCards, 0, 1000);
+            timer.scheduleAtFixedRate(task, 0, 3000);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,20 +61,20 @@ public class Twitter_Driver {
                 break;
             }
 
-            int count = nextNumber(scanner.nextLine());
+            int count = checkInput(scanner::nextLine);
             TJTwitterStatistics statistics = twitter.queryHandle(new Paging(1, count), token);
             out.println("The most common word from @" + token + " is: " + statistics.getMostPopularWord() + ".");
             out.println("The word appears " + statistics.getMaxFrequency() + " times.\n");
         }
     }
 
-    private static int nextNumber(String in) {
+    private static int checkInput(Supplier<String> supplier) {
         do {
-            String token = in;
+            String next = supplier.get();
             try {
-                return Integer.parseInt(token);
+                return Integer.parseInt(next);
             } catch (NumberFormatException e) {
-                System.out.println("Invalid token " + token + " please enter in another number");
+                System.out.println("Invalid token " + next + " please enter in another number");
             }
         } while (true);
     }
@@ -127,6 +89,46 @@ public class Twitter_Driver {
                 .build();
 
         return new TJTwitter(new TwitterFactory(builder).getInstance());
+    }
+
+    private static class Twitter_Driver_Task extends TimerTask {
+        private final Trello trello;
+        private final String boardId;
+        public Board board;
+        private boolean initial = false;
+        private TrelloList oldTrelloList;
+
+        public Twitter_Driver_Task(Trello trello, String boardId) {
+            this.trello = trello;
+            this.boardId = boardId;
+        }
+
+        @Override
+        public void run() {
+            checkInitial();
+
+            Board newBoard = trello.getBoard(boardId);
+            List<TList> newLists = newBoard.fetchLists();
+            TrelloList newTrelloList = TrelloForTwitter.getTrelloList(trello, newLists);
+            MovedCard moved = TrelloForTwitter.findMovedCard(board, oldTrelloList, newTrelloList);
+
+            if (moved != null) {
+                try {
+                    twitter.tweetOut("You moved " + moved.getName() + " from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void checkInitial() {
+            if (!initial) {
+                board = trello.getBoard(boardId);
+                List<TList> oldLists = board.fetchLists();
+                oldTrelloList = TrelloForTwitter.getTrelloList(trello, oldLists);
+                initial = true;
+            }
+        }
     }
 }
 
