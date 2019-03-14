@@ -7,6 +7,7 @@ import com.julienvey.trello.domain.TList;
 import edu.woodson.util.trello.util.Difference;
 import edu.woodson.util.trello.util.MovedCard;
 import edu.woodson.util.trello.util.TrelloList;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
