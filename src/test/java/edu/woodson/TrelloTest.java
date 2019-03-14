@@ -6,9 +6,10 @@ import com.julienvey.trello.domain.Card;
 import com.julienvey.trello.domain.TList;
 import com.julienvey.trello.impl.TrelloImpl;
 import com.julienvey.trello.impl.http.ApacheHttpClient;
+import edu.woodson.util.trello.MovedCard;
+import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class TrelloTest {
 
@@ -25,60 +26,99 @@ public class TrelloTest {
         Scanner sc = new Scanner(System.in);
 
         Trello trello = new TrelloImpl(API_KEY, TOKEN, new ApacheHttpClient());
-        String boardId = "dqJhYMUB";
+        String boardId = "1XDTOfqt";
         Board board = trello.getBoard(boardId);
-
-//        for (Card c: board.fetchCards()) {
-//            System.out.println(c.getName());
-//        }
-
-
-        List<TList> currentLists = board.fetchLists();
-        TList list = currentLists.get(0);
-        List<Card> cards = trello.getListCards(list.getId());
-        for (Card c:cards) {
-            System.out.println(c.getName()); //YESSSS!!!!!!
+        List<TList> oldLists = board.fetchLists();
+        List<Card> oldCards = getCards(trello, oldLists.get(1));
+        for (Card c : oldCards) {
+            System.out.println(c.getName());
         }
+        List<List<Card>> oldTrelloList = getTrelloList(trello, oldLists);
+        // input list of cards to findMovedCards instead of fetch cards from board
 
-//        for (int i = 0; i < list.getCards().size(); i++) {
-//
-//        }
+        sc.next();
+        Board newBoard = trello.getBoard(boardId);
+        List<TList> newLists = newBoard.fetchLists();
+        List<Card> newCards = getCards(trello, newLists.get(1));
+        for (Card c : newCards) {
+            System.out.println(c.getName());
+        }
+        List<List<Card>> newTrelloList = getTrelloList(trello, newLists);
 
-//        for (TList tl:currentLists) {
-//            for (Card c:tl.getCards()) {
-//                System.out.println(tl.toString());
-//            }
-//        }
 
-//        String nothing = sc.next();
-//        List<TList> newLists = board.fetchLists();
-//
-//        System.out.println(findChangedCard(currentLists, newLists));
+        System.out.println(findMovedCard(oldTrelloList, newTrelloList).getName());
+
     }
 
-    public static Card findChangedCard(List<TList> currentLists, List<TList> newLists) {
-        List<Card> current = null;
-        List<Card> newList = null;
+    public static List<Card> getCards(Trello trello, TList list) {
+        return trello.getListCards(list.getId());
+    }
 
-        int i = 0;
+    private static List<List<Card>> getTrelloList(Trello trello, List<TList> lists) {
+        List<List<Card>> result = new LinkedList<>();
 
-        for (; i < newLists.size(); i++) {
-            if (!currentLists.get(i).getCards().equals(newLists.get(i).getCards())) {
-                current = currentLists.get(i).getCards();
-                newList = newLists.get(i).getCards();
-                continue;
+        for (TList tl : lists) {
+            result.add(getCards(trello, tl));
+        }
+
+        return result;
+    }
+
+    public static MovedCard findMovedCard(List<List<Card>> oldBoard, List<List<Card>> newBoard) {
+        for (int i = 0; i < oldBoard.size(); i++) {
+            List<Card> oldCards = oldBoard.get(i);
+            List<Card> newCards = newBoard.get(i);
+            if (oldCards.size() != newCards.size()) {
+                return new MovedCard(findMovedCardWithinLists(oldCards, newCards), findMovedFrom(oldBoard, newBoard), findMovedTo(oldBoard, newBoard));
+            }
+        }
+        return null;
+    }
+
+    private static TList findMovedTo(List<List<Card>> oldBoard, List<List<Card>> newBoard) {
+        return null;
+    }
+
+    private static TList findMovedFrom(List<List<Card>> oldBoard, List<List<Card>> newBoard) {
+        return null;
+    }
+
+    private static String findMovedCardWithinLists(List<Card> oldCards, List<Card> newCards) {
+        List<String> movedTo;
+        List<String> movedFrom;
+
+        if (newCards.size() < oldCards.size()) {
+            movedFrom = new LinkedList<>();
+            for (Card c : newCards) {
+                movedFrom.add(c.getName());
+            }
+            movedTo = new LinkedList<>();
+            for (Card c : oldCards) {
+                movedTo.add(c.getName());
+            }
+        } else {
+            movedFrom = new LinkedList<>();
+            for (Card c : oldCards) {
+                movedFrom.add(c.getName());
+            }
+            movedTo = new LinkedList<>();
+            for (Card c : newCards) {
+                movedTo.add(c.getName());
             }
         }
 
-            if (i == newLists.size())
-                return null;
+        return new LinkedList<>(CollectionUtils.subtract(movedTo, movedFrom)).get(0);
 
-                for (int j = 0; j < current.size(); j++) {
-                    if (!current.get(i).equals(newList.get(i))) {
-                        return newList.get(i);
-                    }
-                }
+    }
 
-        return null;
+    private static Set<Card> symmetricDifference(Set<Card> a, Set<Card> b) {
+        Set<Card> result = new HashSet<>(a);
+        for (Card element : b) {
+            // .add() returns false if element already exists
+            if (!result.add(element)) {
+                result.remove(element);
+            }
+        }
+        return result;
     }
 }
