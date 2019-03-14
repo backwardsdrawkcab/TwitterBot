@@ -2,20 +2,17 @@ package edu.woodson;
 
 import com.julienvey.trello.Trello;
 import com.julienvey.trello.domain.Board;
-import com.julienvey.trello.domain.Card;
 import com.julienvey.trello.domain.TList;
 import com.julienvey.trello.impl.TrelloImpl;
 import com.julienvey.trello.impl.http.ApacheHttpClient;
 import edu.woodson.util.trello.TrelloForTwitter;
-import edu.woodson.util.trello.util.Difference;
 import edu.woodson.util.trello.util.MovedCard;
 import edu.woodson.util.trello.util.TrelloList;
-import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.*;
 import java.util.List;
+import java.util.Scanner;
 
-public class TrelloTest {
+public class NewTrelloTest {
 
     // Using trello account
     // Email: twitterinterfacewithtrello@gmail.com
