@@ -10,38 +10,24 @@ import edu.woodson.util.trello.TrelloForTwitter;
 import edu.woodson.util.trello.util.MovedCard;
 import edu.woodson.util.trello.util.TrelloList;
 import twitter4j.Paging;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Twitter_Driver {
-
     private static Scanner scanner = new Scanner(System.in);
+    private static TJTwitter twitter = buildTJTwitter();
 
     public static void main(String[] args) {
         try {
-            TJTwitter bigBird = buildTJTwitter();
-
-
-            while (true) {
-                System.out.print("Please enter a Twitter handle, do not include the @ symbol --> ");
-                String token = scanner.nextLine();
-                if (token.equals("done")) {
-                    break;
-                }
-
-                int count = nextNumber();
-                TJTwitterStatistics statistics = bigBird.queryHandle(new Paging(1, count), token);
-                System.out.println("The most common word from @" + token + " is: " + statistics.getMostPopularWord() + ".");
-                System.out.println("The word appears " + statistics.getMaxFrequency() + " times.\n");
-            }
+            printStatistics(System.out);
 
             // PART IV
             //bigBird.investigate();
@@ -83,7 +69,7 @@ public class Twitter_Driver {
 
                         if (moved != null) {
                             try {
-                                bigBird.tweetOut("You moved " + moved.getName() + " from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
+                                twitter.tweetOut("You moved " + moved.getName() + " from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
                             } catch (TwitterException e) {
                                 e.printStackTrace();
                             }
@@ -102,9 +88,24 @@ public class Twitter_Driver {
         }
     }
 
-    private static int nextNumber() {
-        do {
+    private static void printStatistics(PrintStream out) throws Exception {
+        while (true) {
+            out.print("Please enter a Twitter handle, do not include the @ symbol --> ");
             String token = scanner.nextLine();
+            if (token.equals("done")) {
+                break;
+            }
+
+            int count = nextNumber(scanner.nextLine());
+            TJTwitterStatistics statistics = twitter.queryHandle(new Paging(1, count), token);
+            out.println("The most common word from @" + token + " is: " + statistics.getMostPopularWord() + ".");
+            out.println("The word appears " + statistics.getMaxFrequency() + " times.\n");
+        }
+    }
+
+    private static int nextNumber(String in) {
+        do {
+            String token = in;
             try {
                 return Integer.parseInt(token);
             } catch (NumberFormatException e) {
@@ -122,8 +123,7 @@ public class Twitter_Driver {
                 .setOAuthAccessTokenSecret("pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY")
                 .build();
 
-        Twitter twitter = new TwitterFactory(builder).getInstance();
-        return new TJTwitter(twitter);
+        return new TJTwitter(new TwitterFactory(builder).getInstance());
     }
 }
 
