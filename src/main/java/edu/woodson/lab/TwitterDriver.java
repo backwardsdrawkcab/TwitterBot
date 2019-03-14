@@ -16,7 +16,6 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
@@ -24,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-public class TwitterDriver {
+class TwitterDriver {
     private static final String API_KEY = "6a888dffccb4c413711d7d617057fa07";
     private static final String TOKEN = "186d9044cd5dfdb60c3b5ab3befb2aaeb2daddccdd05244ce152743701fec680";
     private static final String O_AUTH_CONSUMER_KEY = "egk7giRtajHZYXBbKAjzSVhWb";
@@ -42,7 +41,7 @@ public class TwitterDriver {
         new TwitterDriver().start();
     }
 
-    public void start() {
+    private void start() {
         try {
             printStatistics();
             listenForTrello();
@@ -111,12 +110,12 @@ public class TwitterDriver {
         private boolean initial = false;
         private TrelloList oldTrelloList;
 
-        public TwitterDriverChecker(Trello trello, String boardId) {
+        TwitterDriverChecker(Trello trello, String boardId) {
             this.trello = trello;
             this.boardId = boardId;
         }
 
-        public void check() {
+        void check() {
             checkInitial();
 
             Board newBoard = trello.getBoard(boardId);

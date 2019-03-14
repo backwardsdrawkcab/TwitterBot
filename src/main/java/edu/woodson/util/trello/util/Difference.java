@@ -2,9 +2,9 @@ package edu.woodson.util.trello.util;
 
 public class Difference {
 
-    private int previous;
-    private int current;
-    private int index;
+    private final int previous;
+    private final int current;
+    private final int index;
 
     public Difference(int previous, int current, int index) {
         this.previous = previous;

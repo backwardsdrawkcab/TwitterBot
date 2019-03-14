@@ -107,7 +107,7 @@ class TJTwitterTest {
     @Test
     void splitIntoWords() {
         TJTwitter twitter = new TJTwitter(null);
-        List<String> words = twitter.splitIntoWords(Arrays.asList("test0 test1"));
+        List<String> words = twitter.splitIntoWords(Collections.singletonList("test0 test1"));
         assertIterableEquals(Arrays.asList("test0", "test1"), words);
     }
 

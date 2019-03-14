@@ -11,7 +11,7 @@ import java.util.Collection;
  * @version 0.0.0
  * @since 3/13/2019
  */
-public abstract class AbstractResponseList<T> extends ArrayList<T> implements ResponseList<T> {
+abstract class AbstractResponseList<T> extends ArrayList<T> implements ResponseList<T> {
     public AbstractResponseList(Collection<? extends T> c) {
         super(c);
     }

@@ -49,7 +49,7 @@ class TJTwitter {
     /**
      * This method queries the tweets of a particular user's handle.
      *
-     * @param paging
+     * @param paging The paging.
      * @param handle the Twitter handle (username) without the @sign
      */
     @SuppressWarnings("unchecked")
@@ -70,7 +70,7 @@ class TJTwitter {
      * This method fetches the most recent 2,000 tweets of a particular user's handle and
      * stores them in an arrayList of Status objects.  Populates statuses.
      *
-     * @param paging
+     * @param paging The paging.
      * @param handle the Twitter handle (username) without the @sign
      */
     public List<Status> fetchTweets(Paging paging, String handle) throws TwitterException {

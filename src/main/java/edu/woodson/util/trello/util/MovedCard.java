@@ -4,9 +4,9 @@ import com.julienvey.trello.domain.TList;
 
 public class MovedCard {
 
-    private String name;
-    private TList from;
-    private TList to;
+    private final String name;
+    private final TList from;
+    private final TList to;
 
     public MovedCard(String name, TList from, TList to) {
         this.name = name;

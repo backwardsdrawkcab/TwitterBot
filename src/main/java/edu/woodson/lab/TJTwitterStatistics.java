@@ -74,9 +74,8 @@ public class TJTwitterStatistics {
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
      */
-    public List<String> sortAndRemoveEntries() {
+    public void sortAndRemoveEntries() {
         Collections.sort(removeEmptyStrings());
-        return words;
     }
 
     public List<String> setValues(List<String> words) {

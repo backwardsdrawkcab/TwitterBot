@@ -24,7 +24,7 @@ public class TrelloForTwitter {
         return new TrelloList(result);
     }
 
-    public static List<Card> getCards(Trello trello, TList list) {
+    private static List<Card> getCards(Trello trello, TList list) {
         return trello.getListCards(list.getId());
     }
 
