@@ -51,7 +51,7 @@ class TJTwitterStatisticsTest {
 
     @Test
     void mostPopularWord() {
-        Set<String> strings = statistics.mostPopularWord();
+        Set<String> strings = statistics.mostPopularWords();
         assertEquals(1, strings.size());
         assertEquals("test1", CollectionUtil.toSingle(strings));
     }

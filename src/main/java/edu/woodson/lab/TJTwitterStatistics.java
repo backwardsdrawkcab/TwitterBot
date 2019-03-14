@@ -32,7 +32,7 @@ public class TJTwitterStatistics {
     /******************  Part III - Tweet *******************/
 
     public String getMostPopularWord() {
-        return CollectionUtil.toSingle(mostPopularWord());
+        return CollectionUtil.toSingle(mostPopularWords());
     }
 
     /**
@@ -44,7 +44,7 @@ public class TJTwitterStatistics {
      * @post will populate the maxFrequency variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public Set<String> mostPopularWord() {
+    public Set<String> mostPopularWords() {
         if (words.isEmpty()) {
             throw new IllegalStateException("No words found for " + words);
         }

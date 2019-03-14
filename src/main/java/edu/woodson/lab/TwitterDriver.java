@@ -16,6 +16,7 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
@@ -65,26 +66,28 @@ public class TwitterDriver {
 
     private void printStatistics() throws Exception {
         while (true) {
-            System.out.print("Please enter a Twitter handle, do not include the @ symbol --> ");
+            System.out.println("Please enter a Twitter handle, do not include the @ symbol.");
+            System.out.println("To exit this feature, please enter \"done\".");
             String token = scanner.nextLine();
             if (token.equals("done")) {
                 break;
             }
 
-            int count = checkInput(scanner::nextLine);
+            int count = getCount(scanner::nextLine);
             TJTwitterStatistics statistics = twitter.queryHandle(new Paging(1, count), token);
-            System.out.println("The most common word from @" + token + " is: " + statistics.getMostPopularWord() + ".");
+            System.out.println("The most common word from @" + token + " is: " + statistics.mostPopularWords() + ".");
             System.out.println("The word appears " + statistics.getMaxFrequency() + " times.\n");
         }
     }
 
-    private int checkInput(Supplier<String> supplier) {
+    private int getCount(Supplier<String> supplier) {
         do {
+            System.out.println("Enter in the page count:");
             String next = supplier.get();
             try {
                 return Integer.parseInt(next);
             } catch (NumberFormatException e) {
-                System.out.println("Invalid token " + next + " please enter in another number");
+                System.out.println("Invalid token " + next + ". Please try something else:");
             }
         } while (true);
     }
@@ -123,7 +126,9 @@ public class TwitterDriver {
 
             if (moved != null) {
                 try {
-                    twitter.tweetOut("You moved " + moved.getName() + " from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
+                    String message = "You moved " + moved.getName() + " from " + moved.getFrom().getName() + " to " + moved.getTo().getName();
+                    twitter.tweetOut(message);
+                    System.out.println("Tweeted out: " + message);
                 } catch (TwitterException e) {
                     e.printStackTrace();
                 }
