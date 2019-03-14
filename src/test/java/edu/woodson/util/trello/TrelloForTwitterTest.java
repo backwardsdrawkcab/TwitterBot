@@ -46,6 +46,8 @@ class TrelloForTwitterTest {
         MovedCard expected = new MovedCard("Test Card 6 (Moved)", board.fetchLists().get(1), board.fetchLists().get(2));
 
         System.out.println("Expected: " + expected.getName() + " moved from " + expected.getFrom().getName() + " to " + expected.getTo().getName());
+
+        assert moved != null;
         System.out.println("Reality: " + moved.getName() + " moved from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
     }
 
