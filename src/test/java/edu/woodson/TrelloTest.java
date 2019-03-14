@@ -6,8 +6,10 @@ import com.julienvey.trello.domain.Card;
 import com.julienvey.trello.domain.TList;
 import com.julienvey.trello.impl.TrelloImpl;
 import com.julienvey.trello.impl.http.ApacheHttpClient;
+import edu.woodson.util.trello.TrelloForTwitter;
 import edu.woodson.util.trello.util.Difference;
 import edu.woodson.util.trello.util.MovedCard;
+import edu.woodson.util.trello.util.TrelloList;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
@@ -31,156 +33,20 @@ public class TrelloTest {
         String boardId = "1XDTOfqt";
         Board board = trello.getBoard(boardId);
         List<TList> oldLists = board.fetchLists();
-        List<Card> oldCards = getCards(trello, oldLists.get(1));
-        for (Card c : oldCards) {
-            System.out.println(c.getName());
-        }
-        List<List<Card>> oldTrelloList = getTrelloList(trello, oldLists);
-        // input list of cards to findMovedCards instead of fetch cards from board
+
+        TrelloList oldTrelloList = TrelloForTwitter.getTrelloList(trello, oldLists);
 
         sc.next();
         Board newBoard = trello.getBoard(boardId);
         List<TList> newLists = newBoard.fetchLists();
-        List<Card> newCards = getCards(trello, newLists.get(1));
-        for (Card c : newCards) {
-            System.out.println(c.getName());
-        }
-        List<List<Card>> newTrelloList = getTrelloList(trello, newLists);
 
-        MovedCard moved = findMovedCard(board, oldTrelloList, newTrelloList);
+        TrelloList newTrelloList = TrelloForTwitter.getTrelloList(trello, newLists);
 
+        MovedCard moved = TrelloForTwitter.findMovedCard(board, oldTrelloList, newTrelloList);
+
+        assert moved != null;
         System.out.println("You moved " + moved.getName() + " from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
 
     }
 
-    public static List<Card> getCards(Trello trello, TList list) {
-        return trello.getListCards(list.getId());
-    }
-
-    private static List<List<Card>> getTrelloList(Trello trello, List<TList> lists) {
-        List<List<Card>> result = new LinkedList<>();
-
-        for (TList tl : lists) {
-            result.add(getCards(trello, tl));
-        }
-
-        return result;
-    }
-
-    public static MovedCard findMovedCard(Board board, List<List<Card>> oldBoard, List<List<Card>> newBoard) {
-        for (int i = 0; i < oldBoard.size(); i++) {
-            List<Card> oldCards = oldBoard.get(i);
-            List<Card> newCards = newBoard.get(i);
-            if (oldCards.size() != newCards.size()) {
-                return new MovedCard(findMovedCardWithinLists(oldCards, newCards), findMovedFrom(board, oldBoard, newBoard), findMovedTo(board, oldBoard, newBoard));
-            }
-        }
-        return null;
-    }
-
-    private static TList findMovedTo(Board board, List<List<Card>> oldBoard, List<List<Card>> newBoard) {
-        List<Integer> oldSizes = new LinkedList<>();
-        List<Integer> newSizes = new LinkedList<>();
-
-        for (List<Card> cardList : oldBoard) {
-            oldSizes.add(cardList.size());
-        }
-
-        for (List<Card> cardList : newBoard) {
-            newSizes.add(cardList.size());
-        }
-
-        List<Difference> differences = new LinkedList<>();
-
-        for (int i = 0; i < oldSizes.size(); i++) {
-            if (!oldSizes.get(i).equals(newSizes.get(i))) {
-                differences.add(new Difference(oldSizes.get(i), newSizes.get(i), i));
-            }
-        }
-
-        TList movedTo = null;
-
-        for (Difference d : differences) {
-            if (d.getPrevious() < d.getCurrent()) {
-                movedTo = getTListFromIndex(board, d.getIndex());
-            }
-        }
-
-        return movedTo;
-    }
-
-    private static TList findMovedFrom(Board board, List<List<Card>> oldBoard, List<List<Card>> newBoard) {
-        List<Integer> oldSizes = new LinkedList<>();
-        List<Integer> newSizes = new LinkedList<>();
-
-        for (List<Card> cardList : oldBoard) {
-            oldSizes.add(cardList.size());
-        }
-
-        for (List<Card> cardList : newBoard) {
-            newSizes.add(cardList.size());
-        }
-
-        List<Difference> differences = new LinkedList<>();
-
-        for (int i = 0; i < oldSizes.size(); i++) {
-            if (!oldSizes.get(i).equals(newSizes.get(i))) {
-                differences.add(new Difference(oldSizes.get(i), newSizes.get(i), i));
-            }
-        }
-
-        TList movedFrom = null;
-
-        for (Difference d : differences) {
-            if (d.getPrevious() > d.getCurrent()) {
-                movedFrom = getTListFromIndex(board, d.getIndex());
-            }
-        }
-
-        return movedFrom;
-    }
-
-    private static TList getTListFromIndex(Board board, int index) {
-        List<TList> lists = board.fetchLists();
-        return lists.get(index);
-    }
-
-    private static String findMovedCardWithinLists(List<Card> oldCards, List<Card> newCards) {
-        List<String> movedTo;
-        List<String> movedFrom;
-
-        if (newCards.size() < oldCards.size()) {
-            movedFrom = new LinkedList<>();
-            for (Card c : newCards) {
-                movedFrom.add(c.getName());
-            }
-            movedTo = new LinkedList<>();
-            for (Card c : oldCards) {
-                movedTo.add(c.getName());
-            }
-        } else {
-            movedFrom = new LinkedList<>();
-            for (Card c : oldCards) {
-                movedFrom.add(c.getName());
-            }
-            movedTo = new LinkedList<>();
-            for (Card c : newCards) {
-                movedTo.add(c.getName());
-            }
-        }
-
-        return new LinkedList<>(CollectionUtils.subtract(movedTo, movedFrom)).get(0);
-
-    }
-
-    private static Set<Card> symmetricDifference(Set<Card> a, Set<Card> b) {
-        Set<Card> result = new HashSet<>(a);
-        for (Card element : b) {
-            // .add() returns false if element already exists
-            if (!result.add(element)) {
-                result.remove(element);
-            }
-        }
-        return result;
-    }
 }
