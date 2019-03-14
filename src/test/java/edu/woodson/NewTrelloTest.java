@@ -11,7 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
 
-public class TrelloTest {
+public class NewTrelloTest {
 
     // Using trello account
     // Email: twitterinterfacewithtrello@gmail.com
