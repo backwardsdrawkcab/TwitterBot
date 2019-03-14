@@ -1,4 +1,4 @@
-package edu.woodson.util.trello;
+package edu.woodson.util.trello.util;
 
 import com.julienvey.trello.domain.TList;
 

@@ -6,10 +6,12 @@ import com.julienvey.trello.domain.Card;
 import com.julienvey.trello.domain.TList;
 import com.julienvey.trello.impl.TrelloImpl;
 import com.julienvey.trello.impl.http.ApacheHttpClient;
-import edu.woodson.util.trello.MovedCard;
+import edu.woodson.util.trello.util.Difference;
+import edu.woodson.util.trello.util.MovedCard;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
+import java.util.List;
 
 public class TrelloTest {
 
@@ -45,8 +47,9 @@ public class TrelloTest {
         }
         List<List<Card>> newTrelloList = getTrelloList(trello, newLists);
 
+        MovedCard moved = findMovedCard(board, oldTrelloList, newTrelloList);
 
-        System.out.println(findMovedCard(oldTrelloList, newTrelloList).getName());
+        System.out.println("You moved " + moved.getName() + " from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
 
     }
 
@@ -64,23 +67,82 @@ public class TrelloTest {
         return result;
     }
 
-    public static MovedCard findMovedCard(List<List<Card>> oldBoard, List<List<Card>> newBoard) {
+    public static MovedCard findMovedCard(Board board, List<List<Card>> oldBoard, List<List<Card>> newBoard) {
         for (int i = 0; i < oldBoard.size(); i++) {
             List<Card> oldCards = oldBoard.get(i);
             List<Card> newCards = newBoard.get(i);
             if (oldCards.size() != newCards.size()) {
-                return new MovedCard(findMovedCardWithinLists(oldCards, newCards), findMovedFrom(oldBoard, newBoard), findMovedTo(oldBoard, newBoard));
+                return new MovedCard(findMovedCardWithinLists(oldCards, newCards), findMovedFrom(board, oldBoard, newBoard), findMovedTo(board, oldBoard, newBoard));
             }
         }
         return null;
     }
 
-    private static TList findMovedTo(List<List<Card>> oldBoard, List<List<Card>> newBoard) {
-        return null;
+    private static TList findMovedTo(Board board, List<List<Card>> oldBoard, List<List<Card>> newBoard) {
+        List<Integer> oldSizes = new LinkedList<>();
+        List<Integer> newSizes = new LinkedList<>();
+
+        for (List<Card> cardList : oldBoard) {
+            oldSizes.add(cardList.size());
+        }
+
+        for (List<Card> cardList : newBoard) {
+            newSizes.add(cardList.size());
+        }
+
+        List<Difference> differences = new LinkedList<>();
+
+        for (int i = 0; i < oldSizes.size(); i++) {
+            if (!oldSizes.get(i).equals(newSizes.get(i))) {
+                differences.add(new Difference(oldSizes.get(i), newSizes.get(i), i));
+            }
+        }
+
+        TList movedTo = null;
+
+        for (Difference d : differences) {
+            if (d.getPrevious() < d.getCurrent()) {
+                movedTo = getTListFromIndex(board, d.getIndex());
+            }
+        }
+
+        return movedTo;
     }
 
-    private static TList findMovedFrom(List<List<Card>> oldBoard, List<List<Card>> newBoard) {
-        return null;
+    private static TList findMovedFrom(Board board, List<List<Card>> oldBoard, List<List<Card>> newBoard) {
+        List<Integer> oldSizes = new LinkedList<>();
+        List<Integer> newSizes = new LinkedList<>();
+
+        for (List<Card> cardList : oldBoard) {
+            oldSizes.add(cardList.size());
+        }
+
+        for (List<Card> cardList : newBoard) {
+            newSizes.add(cardList.size());
+        }
+
+        List<Difference> differences = new LinkedList<>();
+
+        for (int i = 0; i < oldSizes.size(); i++) {
+            if (!oldSizes.get(i).equals(newSizes.get(i))) {
+                differences.add(new Difference(oldSizes.get(i), newSizes.get(i), i));
+            }
+        }
+
+        TList movedFrom = null;
+
+        for (Difference d : differences) {
+            if (d.getPrevious() > d.getCurrent()) {
+                movedFrom = getTListFromIndex(board, d.getIndex());
+            }
+        }
+
+        return movedFrom;
+    }
+
+    private static TList getTListFromIndex(Board board, int index) {
+        List<TList> lists = board.fetchLists();
+        return lists.get(index);
     }
 
     private static String findMovedCardWithinLists(List<Card> oldCards, List<Card> newCards) {
