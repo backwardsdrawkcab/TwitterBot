@@ -15,3 +15,4 @@ libraryDependencies += "org.junit.jupiter" % "junit-jupiter-api" % "5.3.2" % Tes
 libraryDependencies += "org.junit.jupiter" % "junit-jupiter-engine" % "5.3.2" % Test
 libraryDependencies += "org.junit.jupiter" % "junit-jupiter-params" % "5.3.2" % Test
 libraryDependencies += "org.mockito" % "mockito-core" % "2.+" % Test
+libraryDependencies += "org.apache.commons" % "commons-collections4" % "4.0"
