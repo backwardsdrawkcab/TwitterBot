@@ -15,10 +15,12 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class TwitterDriver {
@@ -28,32 +30,37 @@ public class TwitterDriver {
     private static final String O_AUTH_ACCESS_TOKEN = "1059514626868740096-T5G4cTrK6NExdx1j33ss69X9ODnMq4";
     private static final String O_AUTH_ACCESS_TOKEN_SECRET = "pHoPJfLiWHtNbEUmx0vOnFdMnn6O4Ajvpvs3IcJkwDeAY";
     private static final String O_AUTH_CONSUMER_SECRET = "bLiAVPF6q14TIztSlsatAKRGUenRKQC5MKtWEfAB8xTfqweeHr";
+    private static final int THREAD_SIZE = 8;
+    private static final Duration CHECK_DURATION = Duration.ofSeconds(3);
 
+    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(THREAD_SIZE);
     private final Scanner scanner = new Scanner(System.in);
     private final TJTwitter twitter = buildTJTwitter();
 
     public static void main(String[] args) {
-         new TwitterDriver().start();
+        new TwitterDriver().start();
     }
 
-    public void start(){
+    public void start() {
         try {
             printStatistics();
-
-            // PART IV
-            //bigBird.investigate();
-            Timer timer = new Timer();
-            System.out.println("Enter the Trello board id to listen to: ");
-            String boardId = scanner.next();
-
-            Trello trello = new TrelloImpl(API_KEY, TOKEN, new ApacheHttpClient());
-            Twitter_Driver_Task task = new Twitter_Driver_Task(trello, boardId);
-
-            timer.scheduleAtFixedRate(task, 0, 3000);
-
+            listenForTrello();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void listenForTrello() {
+        String boardId = getBoardID();
+
+        Trello trello = new TrelloImpl(API_KEY, TOKEN, new ApacheHttpClient());
+        TwitterDriverChecker task = new TwitterDriverChecker(trello, boardId);
+        service.scheduleAtFixedRate(task::check, 0, CHECK_DURATION.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    private String getBoardID() {
+        System.out.println("Enter the Trello board id to listen to: ");
+        return scanner.next();
     }
 
     private void printStatistics() throws Exception {
@@ -94,20 +101,19 @@ public class TwitterDriver {
         return new TJTwitter(new TwitterFactory(builder).getInstance());
     }
 
-    private class Twitter_Driver_Task extends TimerTask {
+    private class TwitterDriverChecker {
         private final Trello trello;
         private final String boardId;
-        public Board board;
+        Board board;
         private boolean initial = false;
         private TrelloList oldTrelloList;
 
-        public Twitter_Driver_Task(Trello trello, String boardId) {
+        public TwitterDriverChecker(Trello trello, String boardId) {
             this.trello = trello;
             this.boardId = boardId;
         }
 
-        @Override
-        public void run() {
+        public void check() {
             checkInitial();
 
             Board newBoard = trello.getBoard(boardId);
