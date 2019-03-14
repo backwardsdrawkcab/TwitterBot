@@ -32,7 +32,7 @@ public class TJTwitterStatistics {
     /******************  Part III - Tweet *******************/
 
     public String getMostPopularWord() {
-        return CollectionUtil.toSingle(mostPopularWord());
+        return CollectionUtil.toSingle(mostPopularWords());
     }
 
     /**
@@ -44,7 +44,7 @@ public class TJTwitterStatistics {
      * @post will populate the maxFrequency variable with the frequency of the most common word
      */
     @SuppressWarnings("unchecked")
-    public Set<String> mostPopularWord() {
+    public Set<String> mostPopularWords() {
         if (words.isEmpty()) {
             throw new IllegalStateException("No words found for " + words);
         }
@@ -74,9 +74,8 @@ public class TJTwitterStatistics {
      * You should use your sorting code you wrote earlier this year.
      * Remove all empty strings while you are at it.
      */
-    public List<String> sortAndRemoveEntries() {
+    public void sortAndRemoveEntries() {
         Collections.sort(removeEmptyStrings());
-        return words;
     }
 
     public List<String> setValues(List<String> words) {

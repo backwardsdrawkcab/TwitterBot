@@ -20,7 +20,6 @@ class TrelloForTwitterTest {
         // Username: @twitterinterfacewithuser
         // Password: wtwoodsontwitterlab2019twitterinterfacewithtrello
 
-
         final String API_KEY = "6a888dffccb4c413711d7d617057fa07";
         final String TOKEN = "186d9044cd5dfdb60c3b5ab3befb2aaeb2daddccdd05244ce152743701fec680";
 
@@ -50,5 +49,4 @@ class TrelloForTwitterTest {
         assert moved != null;
         System.out.println("Reality: " + moved.getName() + " moved from " + moved.getFrom().getName() + " to " + moved.getTo().getName());
     }
-
 }

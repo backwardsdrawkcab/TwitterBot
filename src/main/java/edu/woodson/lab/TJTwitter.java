@@ -32,12 +32,6 @@ class TJTwitter {
         return getStatistics().getMaxFrequency();
     }
 
-    /******************  Part III - Tweet *******************/
-
-    public String getMostPopularWord() {
-        return getStatistics().getMostPopularWord();
-    }
-
     public TJTwitterStatistics getStatistics() {
         if (statistics == null) {
             throw new IllegalStateException("Statistics have not been found because nothing was queried yet.");
@@ -46,14 +40,20 @@ class TJTwitter {
         return statistics;
     }
 
+    /******************  Part III - Tweet *******************/
+
+    public String getMostPopularWord() {
+        return getStatistics().getMostPopularWord();
+    }
+
     /**
      * This method queries the tweets of a particular user's handle.
      *
-     * @param paging
+     * @param paging The paging.
      * @param handle the Twitter handle (username) without the @sign
      */
     @SuppressWarnings("unchecked")
-    public void queryHandle(Paging paging, String handle) throws Exception {
+    public TJTwitterStatistics queryHandle(Paging paging, String handle) throws Exception {
         List<Status> statuses = fetchTweets(paging, handle);
         List<String> words = splitIntoWords(toMessage(statuses));
         TJTwitterStatistics statistics = new TJTwitterStatistics();
@@ -63,13 +63,14 @@ class TJTwitter {
         statistics.sortAndRemoveEntries();
 
         this.statistics = statistics;
+        return statistics;
     }
 
     /**
      * This method fetches the most recent 2,000 tweets of a particular user's handle and
      * stores them in an arrayList of Status objects.  Populates statuses.
      *
-     * @param paging
+     * @param paging The paging.
      * @param handle the Twitter handle (username) without the @sign
      */
     public List<Status> fetchTweets(Paging paging, String handle) throws TwitterException {

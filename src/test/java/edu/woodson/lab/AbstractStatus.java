@@ -9,7 +9,7 @@ import java.util.Date;
  * @version 0.0.0
  * @since 3/13/2019
  */
-public abstract class AbstractStatus implements Status {
+abstract class AbstractStatus implements Status {
     @Override
     public Date getCreatedAt() {
         return null;

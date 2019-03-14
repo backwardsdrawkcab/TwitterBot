@@ -14,10 +14,6 @@ import java.util.List;
 
 public class TrelloForTwitter {
 
-    public static List<Card> getCards(Trello trello, TList list) {
-        return trello.getListCards(list.getId());
-    }
-
     public static TrelloList getTrelloList(Trello trello, List<TList> lists) {
         List<List<Card>> result = new LinkedList<>();
 
@@ -26,6 +22,10 @@ public class TrelloForTwitter {
         }
 
         return new TrelloList(result);
+    }
+
+    private static List<Card> getCards(Trello trello, TList list) {
+        return trello.getListCards(list.getId());
     }
 
     public static MovedCard findMovedCard(Board board, TrelloList oldTrelloList, TrelloList newTrelloList) {

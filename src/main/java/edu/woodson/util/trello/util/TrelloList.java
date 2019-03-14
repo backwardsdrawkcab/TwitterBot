@@ -6,7 +6,7 @@ import java.util.List;
 
 public class TrelloList {
 
-    private List<List<Card>> trelloList;
+    private final List<List<Card>> trelloList;
 
     public TrelloList(List<List<Card>> trelloList) {
         this.trelloList = trelloList;
