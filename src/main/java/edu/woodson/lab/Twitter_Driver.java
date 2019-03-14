@@ -27,9 +27,7 @@ public class Twitter_Driver {
         try {
             PrintStream consolePrint = System.out;
 
-            // PART III - Connect
-            // set classpath, edit properties file
-            @SuppressWarnings("SpellCheckingInspection")
+
             Configuration builder = new ConfigurationBuilder()
                     .setDebugEnabled(true)
                     .setOAuthConsumerKey("egk7giRtajHZYXBbKAjzSVhWb")
@@ -40,22 +38,6 @@ public class Twitter_Driver {
 
             Twitter twitter = new TwitterFactory(builder).getInstance();
             TJTwitter bigBird = new TJTwitter(twitter);
-
-            // Part III - Tweet
-            // Create and set a String called message below
-            // Uncomment this line to test, but then re-comment so that the same
-            // tweet does not get sent out over and over.
-
-//      String message="Go Colonials!";
-//      twitter.updateStatus(message);
-
-      /*
-      String message="Go Colonials!";
-      bigBird.tweetOut(message);
-      */
-
-            // PART III - Test
-            // Choose a public Twitter user's handle
 
             Scanner scan = new Scanner(System.in);
             consolePrint.print("Please enter a Twitter handle, do not include the @symbol --> ");
