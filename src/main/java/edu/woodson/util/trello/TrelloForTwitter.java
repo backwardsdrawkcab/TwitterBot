@@ -7,16 +7,11 @@ import com.julienvey.trello.domain.TList;
 import edu.woodson.util.trello.util.Difference;
 import edu.woodson.util.trello.util.MovedCard;
 import edu.woodson.util.trello.util.TrelloList;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class TrelloForTwitter {
-
-    public static List<Card> getCards(Trello trello, TList list) {
-        return trello.getListCards(list.getId());
-    }
 
     public static TrelloList getTrelloList(Trello trello, List<TList> lists) {
         List<List<Card>> result = new LinkedList<>();
@@ -26,6 +21,10 @@ public class TrelloForTwitter {
         }
 
         return new TrelloList(result);
+    }
+
+    public static List<Card> getCards(Trello trello, TList list) {
+        return trello.getListCards(list.getId());
     }
 
     public static MovedCard findMovedCard(Board board, TrelloList oldTrelloList, TrelloList newTrelloList) {
